@@ -1,7 +1,7 @@
 module(...,package.seeall)
 require "zip"
-xmlparser = require ("xml-mod")
-handler = require("handler-mod")
+xmlparser = require ("luaxml-mod-xml")
+handler = require("luaxml-mod-handler")
 
 function load(filename)
   local p = {
@@ -44,11 +44,13 @@ function tableValues(tbl,x1,y1,x2,y2)
   if type(tbl["table:table-row"])=="table" then
     local rows = table_slice(tbl["table:table-row"],y1,y2)
     for k,v in pairs(rows) do
+      -- In every sheet, there are two rows with no data at the bottom, we need to strip them
+      if(v["_attr"] and v["_attr"]["table:number-rows-repeated"] and tonumber(v["_attr"]["table:number-rows-repeated"])>10000) then break end
       local j = {}
       if #v["table:table-cell"] > 1 then
         local r = table_slice(v["table:table-cell"],x1,x2)
         for p,n in pairs(r) do
-          table.insert(j,{value=n["text:p"],attr=n["_attr"]})
+          table.insert(j,{value=n["text:p"] or "",attr=n["_attr"]})
         end
       else
         local p = {value=v["table:table-cell"]["text:p"],attr=v["table:table-cell"]["_attr"]} 
@@ -102,4 +104,61 @@ end
 
 function interp(s, tab)
   return (s:gsub('(-%b{})', function(w) return tab[w:sub(3, -2)] or w end))
+end
+
+
+-- Interface for adding new rows to the spreadsheet
+
+function newRow()
+  local p = {
+    pos = 0,
+    cells = {},
+    -- Generic function for inserting cell
+    addCell = function(self,val, attr,pos)
+      if pos then
+        table.insert(self.cells,pos,{["text:p"] = val, ["_attr"] = attr})
+        self.pos = pos
+      else
+        self.pos = self.pos + 1
+        table.insert(self.cells,self.pos,{["text:p"] = val, ["_attr"] = attr})
+      end
+    end, 
+    addString = function(self,s,attr,pos)
+      local attr = attr or {}
+      attr["office:value-type"] = "string"
+      self:addCell(s,attr,pos)
+    end,
+    addFloat = function(self,i,attr,pos)
+      local attr = attr or {}
+      local s = tonumber(i) or 0
+      s = tostring(s)
+      attr["office:value-type"] = "float"
+      attr["office:value"] = s
+      self:addCell(s,attr,pos)
+    end, 
+    findLastRow = function(self,sheet)
+      for i= #sheet["table:table-row"],1,-1 do
+        if sheet["table:table-row"][i]["_attr"]["table:number-rows-repeated"] then
+          return i
+        end
+      end
+    end,
+    insert = function(self, sheet, pos)
+      local t = {}
+      local pos = pos or self:findLastRow(sheet)
+      for i=1, #sheet["table:table-column"] do
+        table.insert(t,self.cells[i] or {})  
+      end
+      t = {["table:table-cell"]=t}
+      table.insert(sheet["table:table-row"],pos,t)
+    end
+  }
+  return p
+end
+
+
+-- function for updateing the archive. Depends on external zip utility
+function updateZip(zipfile, updatefile)
+  local command  =  string.format("zip %s %s",zipfile, updatefile)
+  print ("Updating an ods file.\n" ..command .."\n Return code: ", os.execute(command))  
 end
