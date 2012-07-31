@@ -42,20 +42,23 @@ columns = split(s,",")
 
 % Variable initialization and helper functions
 \begin{luacode*}
-odsreader = require("odsfile")
-odsfile   = nil
-sheetname = nil
-range     = {nil,nil,nil,nil}
-columns   = nil
-templates = {}
+odsreader   = require("odsfile")
+odsfile     = nil
+sheetname   = nil
+range       = {nil,nil,nil,nil}
+columns     = nil
+templates   = {}
+row         = {}
+body        = nil
+odsfilename = ""
 currenttemplate = "default"
 \end{luacode*}
 
 \newcommand\loadodsfile[2][]{%
   \setkeys{includespread}{#1}%
   \luaexec{%
-    odsfile     = "\luatexluaescapestring{#2}"%
-    local ods   = odsreader.load(odsfile)%
+    odsfilename     = "\luatexluaescapestring{#2}"%
+    local ods   = odsreader.load(odsfilename)%
     odsfile, e  = ods:loadContent()%
   }%
 }
@@ -75,7 +78,7 @@ currenttemplate = "default"
   }%
   \setkeys{includespread}{#1}%
   \luaexec{%
-    local body   = odsreader.getTable(odsfile,sheetname)
+    body   = odsreader.getTable(odsfile,sheetname)
     local values = odsreader.tableValues(body,range[1],range[2],range[3],range[4])
     %-- Conversion of odsfile table values to LaTeX tabular  
     local rowValues = function(row)
@@ -114,4 +117,41 @@ currenttemplate = "default"
 \\end{tabular}
 }
 
+% Interface for adding of new rows
+
+\newenvironment{AddRow}[1][]{%
+\def\AddString##1##2{% 
+\luaexec{%
+local pos = "\luatexluaescapestring{##2}"%
+if pos == "" then pos = nil end; row:addString("\luatexluaescapestring{\unexpanded{##1}}",nil,pos)%
+}%
+}%
+\def\AddNumber##1##2{%
+\luaexec{%
+local pos = "\luatexluaescapestring{##2}"%
+if pos == "" then pos = nil end; row:addFloat("\luatexluaescapestring{##1}",nil,pos)%
+}%
+}%
+\luaexec{%
+pos = "\luatexluaescapestring{#1}"%
+if pos == "" then pos = nil end; row = odsreader.newRow()%
+}%
+}{%
+\luaexec{%
+body = body or odsreader.getTable(odsfile)
+row:insert(body,pos)%
+}%
+}
+
+% Interface for saving the spreadsheet
+
+\newcommand\savespreadsheet{%
+\luaexec{%
+ local xml = require("luaxml-mod-xml")
+ f = io.open("content.xml","w")%
+ f:write(xml.serialize(odsfile.root))%
+ f:close()%
+ odsreader.updateZip(odsfilename,"content.xml")%
+}%
+}
 \endinput
