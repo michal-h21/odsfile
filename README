@@ -1,7 +1,7 @@
 Introduction
 ------------
 
-The odsfile is LuaLaTeX package and lua library for reading opendocument spreadsheet (ods) documents from Open/Libre Office Calc and typeseting them as LaTeX tables. 
+The odsfile is LuaLaTeX package and lua library for workingwith opendocument spreadsheet (ods) documents from Open/Libre Office Calc and typeseting them as LaTeX tables, it is also possible to add new data to them. 
 This package uses LuaTeX's zip library and scripting to read these files, 
 which means that it is not possible to use this package with pdfLaTeX or XeLaTeX. On the other side, odsfile.lua library
 can be used from PlainTeX, ConTeXt or pure lua scripts.
