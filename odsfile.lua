@@ -142,11 +142,18 @@ function newRow()
           return i
         end
       end
+      return #sheet["table:table-row"]+1
     end,
     insert = function(self, sheet, pos)
       local t = {}
       local pos = pos or self:findLastRow(sheet)
-      for i=1, #sheet["table:table-column"] do
+      print("pos je: ",pos)
+      if sheet["table:table-column"]["_attr"] and sheet["table:table-column"]["_attr"]["table:number-columns-repeated"] then
+	table_columns = sheet["table:table-column"]["_attr"]["table:number-columns-repeated"]
+      else 
+	table_columns = #sheet["table:table-column"]
+      end
+      for i=1, table_columns do
         table.insert(t,self.cells[i] or {})  
       end
       t = {["table:table-cell"]=t}
