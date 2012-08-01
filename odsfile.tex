@@ -25,7 +25,8 @@ inserting \textsf{opendocument spreadsheet} as \LaTeX\ tables\thanks{Version 0.1
 
 \section{Introduction}
 
-This is \LuaLaTeX{} package and \textsf{lua} library for reading \textsf{opendocument spreadsheet} (\ods) documents from Open/Libre Office Calc and typeseting them as \LaTeX{} tables. 
+This is \LuaLaTeX{} package and \textsf{lua} library for working with \textsf{opendocument spreadsheet} (\ods) documents from Open/Libre Office Calc. They can be read as \LaTeX tables, you can also add new data to them.
+
 \ods format consist of number of |xml| files packed in the |zip| file. This package uses \LuaTeX's zip library and scripting to read |xml| content from this archive, 
 which means that it is not possible to use this package with pdf\LaTeX{} or \XeLaTeX. On the other side, |odsfile.lua| library
 can be used from Plain\TeX, Con\TeX{}t or pure |lua| scripts.   
@@ -33,14 +34,17 @@ can be used from Plain\TeX, Con\TeX{}t or pure |lua| scripts.
 Creation of this package was motivated by question\footnote{\url{http://tex.stackexchange.com/questions/60378/insert-libreoffice-table-as-input}} on site \url{http://tex.stackexchange.com/}. Development version of the package can be found at \url{https://github.com/michal-h21/odsfile}, all contributions and comments are welcome. 
 \section{Usage}
 
-You can load |odsfile| classicaly with
+You can load |odsfile| classically with
 \begin{verbatim}
 \usepackage{odsfile}
 \end{verbatim}
-There are two macros:
+There are macros:
 \begin{itemize}
 \item \cmd{\includespread}
 \item \cmd{\tabletemplate}
+\item \cmd{\loadodsfile}
+\item \cmd{\savespreadsheet}
+\item |AddRow| environment 
 \end{itemize}
 
 \noindent Main command is\marginpar{\cmd{\includespread}} \cmd{\includespread}. It's syntax is:\\ 
@@ -116,7 +120,7 @@ in this case you can use
 \end{tabular}     
 \end{LTXexample} 
 
-\item[template] Templates are simple mechanism to insert whole tabular environment with column specification. All columns are aligned to the left, if you want to do more advanced stuff with column specifications, you must enter them manualy as in all previous examples.
+\item[template] Templates are simple mechanism to insert whole tabular environment with column specification. All columns are aligned to the left, if you want to do more advanced stuff with column specifications, you must enter them manually as in all previous examples.
 \begin{LTXexample}
 \includespread[columns=top,template=booktabs,range=a3]
 \end{LTXexample}
@@ -159,7 +163,43 @@ It should be possible to use more intelligent method based on types of column co
 } 
 \end{verbatim}
 Note use of the double |\| in template definition -- it is needed to pass them to the |lua| side.
+
+\section{Adding data}
+
+There is simple interface for adding new rows to the spreadsheet.
+
+|AddRow|\oarg{row number}\marginpar{|AddRow|} environment for adding new row to the current sheet. Optional argument \oarg{row number} specifies where it should be inserted, if blank, it will be inserted at end.
+
+Inside |AddRow|, you can use 
+\begin{itemize}
+	\item \cmd{\AddString}\marg{text}\marg{position} 
+	\item \cmd{\AddNumber}\marg{number}\marg{position}
+\end{itemize} 
+Position specifies cell, where data should be added, if you leave it blank, it will be laced next to the previous one.
+
+\begin{LTXexample}
+\includespread[columns=head,template=booktabs]
+\begin{AddRow}
+  \AddString{last row}{}
+\end{AddRow} 
+\begin{AddRow}[3]
+  \AddString{third row}{}
+  \AddNumber{22}{3}
+\end{AddRow} 
+\includespread[columns=head,template=booktabs]
+\end{LTXexample}
+
+\section{Loading and saving of the \ods file}
+
+You can explicitly load \ods file with \marginpar{\cmd{\loadodsfile}}\cmd{\loadodsfile}\oarg{key val list}\marg{filename}. This can be useful, if you only want to write some data to the file, otherwise it is better to use \cmd{\includespread}.
+
+For saving spreadsheets modified with |AddRow|, you can use \cmd{\savespreadsheet}\marginpar{\cmd{\savespreadsheet}}. This command uses call to external |zip| utility, so you should have installed it and you have to call lua\LaTeX with |lualatex --shell-escape filename|. Lua\LaTeX also must have write permissions for accessing the \ods file. This command creates file |content.xml| in the current directory, so if externall call fails, you can run
+\begin{verbatim}
+zip -r filename.ods content.xml
+\end{verbatim} 
+by hand.
 \section{Lua library}
+
 
 The |lua| library uses |luazip| library integrated to \LuaTeX{} and |LuaXML|\footnote{\url{http://manoelcampos.com/files/LuaXML-0.0.0-lua5.1.tgz}}, pure |lua| library for working with |XML| files.
 
@@ -246,7 +286,7 @@ end
 print(tableToTabular(odsfile.tableValues(body)))
 \end{verbatim}  
 
-This example yelds
+This example yields
 
 \begin{verbatim}
 Label & Position & Count\\
@@ -256,6 +296,8 @@ AA & 3 & 5\\
 BB & 4 & 6\\
 CC & 5 & 7
 \end{verbatim}
+
+
 
 \section{Changes}
 
