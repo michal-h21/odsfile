@@ -1,5 +1,5 @@
 \documentclass{ltxdoc}
-\usepackage{odsfile,tgschola,metalogo,hyperref,xspace,microtype,showexpl,booktabs,url}
+\usepackage{odsfile,tgschola,metalogo,hyperref,xspace,microtype,showexpl,booktabs,url,tikz,pgfplots}
 \author{Michal Hoftich (\url{michal.h21@gmail.com})}
 \title{The \textsf{odsfile} package:\\
 inserting \textsf{opendocument spreadsheet} as \LaTeX\ tables\thanks{Version 0.1, last revisited 2012-07-22.}
@@ -113,7 +113,15 @@ in this case you can use
 \end{LTXexample}
 \end{description}
 
-\item[rowseparator] Rows are normally separated with newlines, if you really want, you can separate them with hlines
+\item[rowseparator] Rows are normally separated with newlines, if you really want, you can separate them with hlines. 
+
+Possible values:
+\begin{description}
+\item[tableline (default)] Inserts \\\\ character
+\item[hline] Inserts \\\\ \\hline character
+\item[newline] Inserts blank line
+\item[user specified separator] useful in conjunction with \ref{it:rowtemplate} (p. \pageref{[it:rowtemplate]}), if you want to use data not as table, but as plaintext or input for plotting functions, for example.  
+\end{description} 
 \begin{LTXexample}
 \begin{tabular}{lll}
 \includespread[columns=top,sheet=List1,rowseparator=hline,range=a2:b5]
@@ -125,11 +133,15 @@ in this case you can use
 \includespread[columns=top,template=booktabs,range=a3]
 \end{LTXexample}
 For more info about templates, see next section \ref{sec:tpl}
-\item[rowtemplate] Enables to convert tabular data to something different than \LaTeX tables. 
+
+\item[rowtemplate] 
+\makeatletter
+\edef\@currentlabel{rowtemplate}
+\label{it:rowtemplate} Enables to convert tabular data to something different than \LaTeX\ tables.
+\makeatother
 \begin{LTXexample}
 \includespread[range=a2,rowseparator={, },rowtemplate={:-{1}:}]
 \end{LTXexample}
-\end{description}
 
 
 \section{Templates}\label{sec:tpl}
@@ -205,7 +217,7 @@ by hand.
 \section{Lua library}
 
 
-The |lua| library uses |luazip| library integrated to \LuaTeX{} and |LuaXML|\footnote{\url{http://manoelcampos.com/files/LuaXML-0.0.0-lua5.1.tgz}}, pure |lua| library for working with |XML| files.
+The |lua| library uses |luazip| library integrated to \LuaTeX{} and |LuaXML|\footnote{\url{https://github.com/michal-h21/LuaXML}}, pure |lua| library for working with |XML| files.
 
 To use library in your code, you can use:
 

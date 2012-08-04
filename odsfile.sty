@@ -12,12 +12,16 @@ range = {x1,y1,x2,y2}%
 \define@key{includespread}{template}{\luaexec{currenttemplate="\luatexluaescapestring{#1}"}}
 \define@key{includespread}{rowtemplate}{\luaexec{rowtemplate="\luatexluaescapestring{#1}"}}
 
-\define@choicekey*+{includespread}{rowseparator}[\val\nr]{newline,hline}[newline]%
+\define@choicekey*+{includespread}{rowseparator}[\val\nr]{tableline,hline,newline}[tableline]%
 {%
 \ifcase\nr\relax%
   \luaexec{rowseparator=""}%
 \or%
   \luaexec{rowseparator="\\hline "}%
+\or
+\luaexec{%
+rowseparator=[[^^J]]
+}
 \fi%
 }{%
 	\luaexec{rowseparator="\luatexluaescapestring{#1}"}
@@ -54,7 +58,7 @@ templates   = {}
 row         = {}
 body        = nil
 odsfilename = ""
-currenttemplate = "default"
+currenttemplate = nil
 rowtemplate=nil
 \end{luacode*}
 
@@ -78,7 +82,7 @@ rowtemplate=nil
     range = {nil,nil,nil,nil}
     rowseparator = ""
     columns=nil
-    currenttemplate = "default" 
+    currenttemplate = nil 
     rowtemplate = nil
   }%
   \setkeys{includespread}{#1}%
@@ -92,34 +96,40 @@ rowtemplate=nil
       return t
     end
     if rowtemplate == nil then
+      currenttemplate = currenttemplate or "default"
       content = {}   
       for i,row in pairs(values) do
-	table.insert(content,table.concat(rowValues(row)," & "))
+      	table.insert(content,table.concat(rowValues(row)," & "))
       end
       %-- Column headings handling
       local colheading=""
       if type(columns) == "number" and columns == 1 then
-	columns = rowValues(values[1])
-	content = odsreader.table_slice(content,2,nil)
+      	columns = rowValues(values[1])
+      	content = odsreader.table_slice(content,2,nil)
       elseif type(columns) == "number" and columns == 2 then
-	local t = odsreader.tableValues(body,range[1],1,range[3],2)
-	columns = rowValues(t[1])
+      	local t = odsreader.tableValues(body,range[1],1,range[3],2)
+      	columns = rowValues(t[1])
       end  
       if type(columns) == "table" then colheading = table.concat(columns," & ") .. "\\\\" end
       coltypes = ""
       if type(content)== "table" then coltypes= string.rep("l",\#content[1]) end
-      tex.sprint(odsreader.interp(templates[currenttemplate],{content=table.concat(content, "\\\\ "..rowseparator),coltypes=coltypes,colheading=colheading,rowsep=rowseparator}))
+      tex.print(odsreader.interp(templates[currenttemplate],{content=table.concat(content, "\\\\ "..rowseparator),coltypes=coltypes,colheading=colheading,rowsep=rowseparator}))
     else
       local content = {}  
+      currenttemplate = currenttemplate or "empty"
       for _,row in pairs(values) do
         table.insert(content,odsreader.interp(rowtemplate,rowValues(row)))
       end
-      tex.sprint(table.concat(content,rowseparator))
+      content = table.concat(content,rowseparator) 
+      tex.sprint(odsreader.interp(templates[currenttemplate],{content=content}))
     end
   }
 }
 
+\tabletemplate{empty}{-{content}}
+
 \tabletemplate{default}{-{colheading}-{rowsep}-{content}}
+
 \tabletemplate{booktabs}{%
 \\begin{tabular}{-{coltypes}}
 \\toprule
