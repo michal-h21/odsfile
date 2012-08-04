@@ -103,7 +103,13 @@ function table_slice (values,i1,i2)
 end
 
 function interp(s, tab)
-  return (s:gsub('(-%b{})', function(w) return tab[w:sub(3, -2)] or w end))
+  return (s:gsub('(-%b{})', 
+    function(w) 
+      s = w:sub(3, -2)
+      s = tonumber(s) or s
+      return tab[s] or w 
+    end)
+  )
 end
 
 
