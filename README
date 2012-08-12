@@ -3,7 +3,7 @@ Introduction
 
 The odsfile is LuaLaTeX package and lua library for working with 
 opendocument spreadsheet (ods) documents from Open/Libre Office Calc. 
-It is possible to select cells from sheets and typesset them as LaTeX tables,
+It is possible to select cells from sheets and typeset them as LaTeX tables,
 it is also possible to pass these data to LaTeX macros and make some plots,
 for example.   
 
