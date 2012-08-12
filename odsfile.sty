@@ -10,7 +10,7 @@ local x1,y1,x2,y2 = odsreader.getRange("\luatexluaescapestring{#1}")%
 range = {x1,y1,x2,y2}%
 }}
 \define@key{includespread}{template}{\luaexec{currenttemplate="\luatexluaescapestring{#1}"}}
-\define@key{includespread}{rowtemplate}{\luaexec{rowtemplate="\luatexluaescapestring{#1}"}}
+\define@key{includespread}{rowtemplate}{\luaexec{rowtemplate="\luatexluaescapestring{\unexpanded{#1}}"}}
 
 \define@choicekey*+{includespread}{rowseparator}[\val\nr]{tableline,hline,newline}[tableline]%
 {%
@@ -20,7 +20,7 @@ range = {x1,y1,x2,y2}%
   \luaexec{rowseparator="\\hline "}%
 \or
 \luaexec{%
-rowseparator=[[^^J]]
+rowseparator=[[\\n]]
 }
 \fi%
 }{%
@@ -73,7 +73,7 @@ rowtemplate=nil
 
 \newcommand\tabletemplate[2]{%
   \luaexec{%
-    templates["#1"]="#2"
+    templates["#1"]="\luatexluaescapestring{\unexpanded{#2}}"
   }
 }
 
@@ -131,13 +131,13 @@ rowtemplate=nil
 \tabletemplate{default}{-{colheading}-{rowsep}-{content}}
 
 \tabletemplate{booktabs}{%
-\\begin{tabular}{-{coltypes}}
-\\toprule
+\begin{tabular}{-{coltypes}}
+\toprule
 -{colheading}
-\\midrule
+\midrule
 -{content}
-\\\\ \\bottomrule
-\\end{tabular}
+\\ \bottomrule
+\end{tabular}
 }
 
 % Interface for adding of new rows
