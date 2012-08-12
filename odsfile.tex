@@ -2,7 +2,7 @@
 \usepackage{odsfile,tgschola,metalogo,hyperref,xspace,microtype,showexpl,booktabs,url}
 \author{Michal Hoftich (\url{michal.h21@gmail.com})}
 \title{The \textsf{odsfile} package:\\
-inserting \textsf{opendocument spreadsheet} as \LaTeX\ tables\thanks{Version 0.1, last revisited 2012-07-22.}
+accessing of the \textsf{opendocument spreadsheet} from \LaTeX{} documents\thanks{Version 0.2, last revisited 2012-08-12.}
 }
 \usepackage[english]{babel}
 \lstloadlanguages{[LaTeX]Tex} 
@@ -25,11 +25,17 @@ inserting \textsf{opendocument spreadsheet} as \LaTeX\ tables\thanks{Version 0.1
 
 \section{Introduction}
 
-This is \LuaLaTeX{} package and \textsf{lua} library for working with \textsf{opendocument spreadsheet} (\ods) documents from Open/Libre Office Calc. They can be read as \LaTeX tables, you can also add new data to them.
+This is \LuaLaTeX{} package and \textsf{lua} library for working with 
+\textsf{opendocument spreadsheet} (\ods) documents from Open/Libre Office Calc. 
+Their contents can be read as \LaTeX{} tables, can be pass to macros,
+ you can also add new data to existing spreadsheets.
 
-\ods format consist of number of |xml| files packed in the |zip| file. This package uses \LuaTeX's zip library and scripting to read |xml| content from this archive, 
-which means that it is not possible to use this package with pdf\LaTeX{} or \XeLaTeX. On the other side, |odsfile.lua| library
-can be used from Plain\TeX, Con\TeX{}t or pure |lua| scripts.   
+\ods format consist of number of |xml| files packed in the |zip| file. 
+This package uses \LuaTeX's zip library, LuaXML library\footnote{Pure |lua| library 
+for working with |xml| files, it is available form CTAN or \url{https://github.com/michal-h21/LuaXML}} and lua scripting to read |xml| content from this archive, 
+which means that it is not possible to use this package with pdf\LaTeX{} or \XeLaTeX. 
+On the other side, |odsfile.lua| library can be used from Plain\TeX, 
+Con\TeX{}t or pure |lua| scripts.   
 
 Creation of this package was motivated by question\footnote{\url{http://tex.stackexchange.com/questions/60378/insert-libreoffice-table-as-input}} on site \url{http://tex.stackexchange.com/}. Development version of the package can be found at \url{https://github.com/michal-h21/odsfile}, all contributions and comments are welcome. 
 \section{Usage}
@@ -117,10 +123,12 @@ in this case you can use
 
 Possible values:
 \begin{description}
-\item[tableline (default)] Inserts \\\\ character
-\item[hline] Inserts \\\\ \\hline character
+\item[tableline (default)] Inserts |\\| character
+\item[hline] Inserts |\\ \\hline| 
 \item[newline] Inserts blank line
-\item[user specified separator] useful in conjunction with \ref{it:rowtemplate} (p. \pageref{[it:rowtemplate]}), if you want to use data not as table, but as plaintext or input for plotting functions, for example.  
+\item[user specified separator] useful in conjunction with \ref{it:rowtemplate} 
+(p. \pageref{it:rowtemplate}), for example if you want to include sheets 
+as plaintext or input for plotting functions.  
 \end{description} 
 \begin{LTXexample}
 \begin{tabular}{lll}
@@ -137,12 +145,14 @@ For more info about templates, see next section \ref{sec:tpl}
 \item[rowtemplate] 
 \makeatletter
 \edef\@currentlabel{rowtemplate}
-\label{it:rowtemplate} Enables to convert tabular data to something different than \LaTeX\ tables.
+\label{it:rowtemplate} Enables to convert tabular data to something different than \LaTeX\ tables. 
+Syntax for rowtemplates is similar to the table templates, variables are inserted with |-{number}|, where 
+number is the position of the cell from beginning of the selection. 
 \makeatother
 \begin{LTXexample}
-\includespread[range=a2,rowseparator={, },rowtemplate={:-{1}:}]
+\includespread[range=a2:b,rowseparator={,\ },rowtemplate={\textit{-{1}}:-{2}}]
 \end{LTXexample}
-
+\end{description} 
 
 \section{Templates}\label{sec:tpl}
 
@@ -169,16 +179,15 @@ It should be possible to use more intelligent method based on types of column co
 
 \begin{verbatim}
 \tabletemplate{booktabs}{%
-\\begin{tabular}{-{coltypes}}
-\\toprule
+\begin{tabular}{-{coltypes}}
+\toprule
 -{colheading}
-\\midrule
+\midrule
 -{content}
-\\\\ \\bottomrule
-\\end{tabular}
+\\ \bottomrule
+\end{tabular}
 } 
 \end{verbatim}
-Note use of the double |\| in template definition -- it is needed to pass them to the |lua| side.
 
 \section{Adding data}
 
