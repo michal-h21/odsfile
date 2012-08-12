@@ -11,7 +11,7 @@ There is also simple interface to add data to existing spreadsheets. This
 functionality requires external zip utility.
  
 This package uses LuaTeX's zip library and scripting to read these files. 
-It also requires LuaXML library, which is also available to download from
+It also requires LuaXML library, which is available to download from
 CTAN site.  
 
 Because of lua scripting, it is not possible to use this package with pdfLaTeX 
