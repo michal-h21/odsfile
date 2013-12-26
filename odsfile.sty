@@ -26,7 +26,7 @@ rowseparator=[[\\n]]
 }{%
 	\luaexec{rowseparator="\luatexluaescapestring{#1}"}
 }
-
+\define@key{includespread}{columnbreak}{\luaexec{columnbreak="\luatexluaescapestring{\unexpanded{#1}}"}}
 \define@choicekey*+{includespread}{columns}[\val\nr]{head,top,none}{%
 \ifcase\nr\relax%
   \luaexec{columns=1}%
@@ -60,6 +60,7 @@ body        = nil
 odsfilename = ""
 currenttemplate = nil
 rowtemplate=nil
+columnbreak = "\\linebreak "
 \end{luacode*}
 
 \newcommand\loadodsfile[2][]{%
@@ -90,9 +91,18 @@ rowtemplate=nil
     body   = odsreader.getTable(odsfile,sheetname)
     local values = odsreader.tableValues(body,range[1],range[2],range[3],range[4])
     %-- Conversion of odsfile table values to LaTeX tabular  
+    local concatParagraphs = function(column)
+      if type(column) =="table" then 
+        return table.concat(column, columnbreak)
+      end
+      return column
+    end
     local rowValues = function(row)
       local t={} 
-      for _,column in pairs(row) do table.insert(t,column.value) end
+      for _,column in pairs(row) do 
+        local value = concatParagraphs(column.value) or ""
+        table.insert(t,value) 
+      end
       return t
     end
     if rowtemplate == nil then
