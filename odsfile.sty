@@ -93,23 +93,50 @@ columnbreak = "\\linebreak "
     %-- Conversion of odsfile table values to LaTeX tabular  
     local concatParagraphs = function(column)
       if type(column) =="table" then 
-        return table.concat(column, columnbreak)
+        return table.concat(column, columnbreak), true
       end
-      return column
+      return column, false
     end
-    local rowValues = function(row)
+    local rowValues = function(row, headings)
+      local headings = headings or {}
       local t={} 
+      local i = 1
       for _,column in pairs(row) do 
-        local value = concatParagraphs(column.value) or ""
-        table.insert(t,value) 
+        local value, br  = concatParagraphs(column.value) 
+        table.insert(t,value)
+        headings[i] = br
+        i = i + 1
       end
-      return t
+      return t, headings
+    end
+    local makeColtypes = function(h)
+      local maxsize = tex.hsize / 65536
+      local h = h or {}
+      local p = 0
+      for _, c in pairs(h) do
+        if c then p = p + 1 end 
+      end
+      if p > 0 then
+        local j = {}
+        local size = tostring(math.floor(maxsize / p)) .. "pt"
+        for _, c in pairs(h) do 
+          local k = "l"
+          if c then k = "p{"..size.."}" end
+          j[\#j+1]= k
+        end
+        return table.concat(j)
+      else 
+        return string.rep("l",\#h)
+      end
     end
     if rowtemplate == nil then
+      local headings = {}
+      local currow = {}
       currenttemplate = currenttemplate or "default"
       content = {}   
       for i,row in pairs(values) do
-      	table.insert(content,table.concat(rowValues(row)," & "))
+        currow, headings = rowValues(row, headings)
+      	table.insert(content,table.concat(currow," & "))
       end
       %-- Column headings handling
       local colheading=""
@@ -122,7 +149,10 @@ columnbreak = "\\linebreak "
       end  
       if type(columns) == "table" then colheading = table.concat(columns," & ") .. "\\\\" end
       coltypes = ""
-      if type(content)== "table" then coltypes= string.rep("l",\#content[1]) end
+      if type(content)== "table" then 
+        % coltypes= string.rep("l",\#content[1]) 
+        coltypes = makeColtypes(headings)
+      end
       tex.print(odsreader.interp(templates[currenttemplate],{content=table.concat(content, "\\\\ "..rowseparator),coltypes=coltypes,colheading=colheading,rowsep=rowseparator}))
     else
       local content = {}  
