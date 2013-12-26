@@ -118,7 +118,7 @@ columnbreak = "\\linebreak "
       end
       if p > 0 then
         local j = {}
-        local size = tostring(math.floor(maxsize / p)) .. "pt"
+        local size = tostring(math.floor(maxsize / \#h)) .. "pt"
         for _, c in pairs(h) do 
           local k = "l"
           if c then k = "p{"..size.."}" end
