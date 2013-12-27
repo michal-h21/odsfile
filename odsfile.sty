@@ -26,7 +26,12 @@ rowseparator=[[\\n]]
 }{%
 	\luaexec{rowseparator="\luatexluaescapestring{#1}"}
 }
-\define@key{includespread}{columnbreak}{\luaexec{columnbreak="\luatexluaescapestring{\unexpanded{#1}}"}}
+\define@key{includespread}{columnbreak}{%
+  \luaexec{columnbreak="\luatexluaescapestring{\unexpanded{#1}}{}"}
+}
+\define@key{includespread}{coltypes}{%
+  \luaexec{coltypes="\luatexluaescapestring{\unexpanded{#1}}"}
+}
 \define@choicekey*+{includespread}{columns}[\val\nr]{head,top,none}{%
 \ifcase\nr\relax%
   \luaexec{columns=1}%
@@ -60,7 +65,6 @@ body        = nil
 odsfilename = ""
 currenttemplate = nil
 rowtemplate=nil
-columnbreak = "\\linebreak "
 \end{luacode*}
 
 \newcommand\loadodsfile[2][]{%
@@ -85,6 +89,8 @@ columnbreak = "\\linebreak "
     columns=nil
     currenttemplate = nil 
     rowtemplate = nil
+    columnbreak = "\\linebreak{}"
+    coltypes    = nil
   }%
   \setkeys{includespread}{#1}%
   \luaexec{%
@@ -148,10 +154,12 @@ columnbreak = "\\linebreak "
       	columns = rowValues(t[1])
       end  
       if type(columns) == "table" then colheading = table.concat(columns," & ") .. "\\\\" end
-      coltypes = ""
+      % coltypes = ""
       if type(content)== "table" then 
         % coltypes= string.rep("l",\#content[1]) 
-        coltypes = makeColtypes(headings)
+        if not coltypes then
+          coltypes = makeColtypes(headings)
+        end
       end
       tex.print(odsreader.interp(templates[currenttemplate],{content=table.concat(content, "\\\\ "..rowseparator),coltypes=coltypes,colheading=colheading,rowsep=rowseparator}))
     else
