@@ -51,23 +51,23 @@ function tableValues(tbl,x1,y1,x2,y2)
       if #v["table:table-cell"] > 1 then
         local r = table_slice(v["table:table-cell"],x1,x2)
         for p,n in pairs(r) do
-	  local cellValue = n["text:p"] or ""
-	  cellValue = string.gsub(cellValue, "#", "\\#")
-	  local att = n["_attr"]
-	  local colRep = 1
-	  if att["table:number-columns-repeated"] ~= nil then
-	      colRep = att["table:number-columns-repeated"]
-	  end
-	  print ('colRep: ' .. colRep)
-	  for i = 1,colRep,1 do
-	    print ('insert')
-	    table.insert(j,{value=cellValue,attr=att})
-	  end
+          local cellValue = n["text:p"] or ""
+          cellValue = string.gsub(cellValue, "#", "\\#")
+          local att = n["_attr"]
+          local colRep = 1
+          if att ~= nil and att["table:number-columns-repeated"] ~= nil then
+            colRep = att["table:number-columns-repeated"]
+        end
+          for i = 1,colRep,1 do
+            table.insert(j,{value=cellValue,attr=att})
+            if #j > (x2-x1) then break end
+          end
+          if #j > (x2-x1) then break end -- hm. looks ugly.
         end
       else
         local p = {value=v["table:table-cell"]["text:p"],attr=v["table:table-cell"]["_attr"]} 
         table.insert(j,p) 
-      end  
+      end
       table.insert(t,j)
     end
   end
@@ -167,9 +167,9 @@ function newRow()
       local pos = pos or self:findLastRow(sheet)
       print("pos je: ",pos)
       if sheet["table:table-column"]["_attr"] and sheet["table:table-column"]["_attr"]["table:number-columns-repeated"] then
-	table_columns = sheet["table:table-column"]["_attr"]["table:number-columns-repeated"]
+        table_columns = sheet["table:table-column"]["_attr"]["table:number-columns-repeated"]
       else 
-	table_columns = #sheet["table:table-column"]
+        table_columns = #sheet["table:table-column"]
       end
       for i=1, table_columns do
         table.insert(t,self.cells[i] or {})  
