@@ -51,7 +51,18 @@ function tableValues(tbl,x1,y1,x2,y2)
       if #v["table:table-cell"] > 1 then
         local r = table_slice(v["table:table-cell"],x1,x2)
         for p,n in pairs(r) do
-          table.insert(j,{value=n["text:p"] or "",attr=n["_attr"]})
+	  local cellValue = n["text:p"] or ""
+	  cellValue = string.gsub(cellValue, "#", "\\#")
+	  local att = n["_attr"]
+	  local colRep = 1
+	  if att["table:number-columns-repeated"] ~= nil then
+	      colRep = att["table:number-columns-repeated"]
+	  end
+	  print ('colRep: ' .. colRep)
+	  for i = 1,colRep,1 do
+	    print ('insert')
+	    table.insert(j,{value=cellValue,attr=att})
+	  end
         end
       else
         local p = {value=v["table:table-cell"]["text:p"],attr=v["table:table-cell"]["_attr"]} 
