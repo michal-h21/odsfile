@@ -1,4 +1,4 @@
-\ProvidesPackage{odsfile.sty}
+\ProvidesPackage{odsfile}
 \RequirePackage{luacode,xkeyval}
 
 %keyval keys
@@ -26,7 +26,12 @@ rowseparator=[[\\n]]
 }{%
 	\luaexec{rowseparator="\luatexluaescapestring{#1}"}
 }
-
+\define@key{includespread}{columnbreak}{%
+  \luaexec{columnbreak="\luatexluaescapestring{\unexpanded{#1}}{}"}
+}
+\define@key{includespread}{coltypes}{%
+  \luaexec{coltypes="\luatexluaescapestring{\unexpanded{#1}}"}
+}
 \define@choicekey*+{includespread}{columns}[\val\nr]{head,top,none}{%
 \ifcase\nr\relax%
   \luaexec{columns=1}%
@@ -84,22 +89,60 @@ rowtemplate=nil
     columns=nil
     currenttemplate = nil 
     rowtemplate = nil
+    columnbreak = "\\linebreak{}"
+    coltypes    = nil
   }%
   \setkeys{includespread}{#1}%
   \luaexec{%
     body   = odsreader.getTable(odsfile,sheetname)
     local values = odsreader.tableValues(body,range[1],range[2],range[3],range[4])
     %-- Conversion of odsfile table values to LaTeX tabular  
-    local rowValues = function(row)
+    local concatParagraphs = function(column)
+      if type(column) =="table" then 
+        return table.concat(column, columnbreak), true
+      end
+      return column, false
+    end
+    local rowValues = function(row, headings)
+      local headings = headings or {}
       local t={} 
-      for _,column in pairs(row) do table.insert(t,column.value) end
-      return t
+      local i = 1
+      for _,column in pairs(row) do 
+        local value, br  = concatParagraphs(column.value) 
+        table.insert(t,value)
+        headings[i] = br
+        i = i + 1
+      end
+      return t, headings
+    end
+    local makeColtypes = function(h)
+      local maxsize = tex.hsize / 65536
+      local h = h or {}
+      local p = 0
+      for _, c in pairs(h) do
+        if c then p = p + 1 end 
+      end
+      if p > 0 then
+        local j = {}
+        local size = tostring(math.floor(maxsize / \#h)) .. "pt"
+        for _, c in pairs(h) do 
+          local k = "l"
+          if c then k = "p{"..size.."}" end
+          j[\#j+1]= k
+        end
+        return table.concat(j)
+      else 
+        return string.rep("l",\#h)
+      end
     end
     if rowtemplate == nil then
+      local headings = {}
+      local currow = {}
       currenttemplate = currenttemplate or "default"
       content = {}   
       for i,row in pairs(values) do
-      	table.insert(content,table.concat(rowValues(row)," & "))
+        currow, headings = rowValues(row, headings)
+      	table.insert(content,table.concat(currow," & "))
       end
       %-- Column headings handling
       local colheading=""
@@ -111,8 +154,13 @@ rowtemplate=nil
       	columns = rowValues(t[1])
       end  
       if type(columns) == "table" then colheading = table.concat(columns," & ") .. "\\\\" end
-      coltypes = ""
-      if type(content)== "table" then coltypes= string.rep("l",\#content[1]) end
+      % coltypes = ""
+      if type(content)== "table" then 
+        % coltypes= string.rep("l",\#content[1]) 
+        if not coltypes then
+          coltypes = makeColtypes(headings)
+        end
+      end
       tex.print(odsreader.interp(templates[currenttemplate],{content=table.concat(content, "\\\\ "..rowseparator),coltypes=coltypes,colheading=colheading,rowsep=rowseparator}))
     else
       local content = {}  

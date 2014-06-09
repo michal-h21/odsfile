@@ -2,7 +2,7 @@
 \usepackage{odsfile,tgschola,metalogo,hyperref,xspace,microtype,showexpl,booktabs,url}
 \author{Michal Hoftich (\url{michal.h21@gmail.com})}
 \title{The \textsf{odsfile} package:\\
-accessing of the \textsf{opendocument spreadsheet} from \LaTeX{} documents\thanks{Version 0.2, last revisited 2012-08-12.}
+accessing of the \textsf{opendocument spreadsheet} from \LaTeX{} documents\thanks{Version 0.3, last revisited 2013-12-27.}
 }
 \usepackage[english]{babel}
 \lstloadlanguages{[LaTeX]Tex} 
@@ -114,10 +114,11 @@ in this case you can use
 \item[manually specified list] If column headings are not specified in the file, you can set them manually.
 \begin{LTXexample}
 \begin{tabular}{ll}
-\includespread[columns=head,columns={title,amount},sheet=List2]
+\includespread[columns={title,amount},sheet=List2]
 \end{tabular}     
 \end{LTXexample}
 \end{description}
+\item[columnbreak] Command inserted in manual linebreaks in cells. Default value is |\linebreak|
 
 \item[rowseparator] Rows are normally separated with newlines, if you really want, you can separate them with hlines. 
 
@@ -141,6 +142,12 @@ as plaintext or input for plotting functions.
 \includespread[columns=top,template=booktabs,range=a3]
 \end{LTXexample}
 For more info about templates, see next section \ref{sec:tpl}
+
+\item[coltypes] When using template, column types are inferred automatically. If that doesn't work well in your case, you can specify them manually with |coltypes| option.
+
+  \begin{LTXexample}
+    \includespread[columns=head, template=booktabs, coltypes=lrr] 
+  \end{LTXexample}
 
 \item[rowtemplate] 
 \makeatletter
@@ -168,8 +175,10 @@ there is default template:
 Code |-{variable name}| inserts one of the following variables:
 
 \begin{description}
-\item[coltypes] This is code to be inserted in |\begin{tabular}{coltypes}|. In current version, it inserts |l| for left alignment column, for all columns of inserted table. 
-It should be possible to use more intelligent method based on types of column content, or \ods styles, maybe in future versions some of them will be used. If you want other alignment of columns now, you have to specify |\begin{tabular}{column types}| manually.
+\item[coltypes] This is code to be inserted in |\begin{tabular}{coltypes}|. %In current version, it inserts |l| for left alignment column, for all columns of inserted table. 
+%It should be possible to use more intelligent method based on types of column content, or \ods styles, maybe in future versions some of them will be used. If you want other alignment of columns now, you have to specify |\begin{tabular}{column types}| manually.
+The |p| column specifier is used for each column, where cell with manual line break occurs, |l| is used otherwise.
+
 \item[colheading] Column headings.
 \item[rowsep] It inserts row separator defined with |rowsepartor| key of |\includespread|. It is used in default style to delimit column headings and table contents.   
 \item[content] Tabular data.
@@ -209,7 +218,7 @@ Position specifies cell, where data should be added, if you leave it blank, it w
 \end{AddRow} 
 \begin{AddRow}[3]
   \AddString{third row}{}
-  \AddNumber{22}{3}
+  \AddNumber{22}{2}
 \end{AddRow} 
 \includespread[columns=head,template=booktabs]
 \end{LTXexample}
@@ -327,6 +336,12 @@ CC & 5 & 7
 \section{Changes}
 
 \begin{description}
+\item[v0.3]
+\begin{itemize}
+  \item Added support for multiline cells
+  \item Improved automatic column types generation
+  \item Added new options, |coltypes| and |columnbreak|
+\end{itemize}
 \item[v0.2] 
 \begin{itemize}
  \item LuaXML is now distributed as separate library, so other projects can use it.
