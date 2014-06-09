@@ -99,7 +99,8 @@ rowtemplate=nil
     %-- Conversion of odsfile table values to LaTeX tabular  
     local concatParagraphs = function(column)
       if type(column) =="table" then 
-        return table.concat(column, columnbreak), true
+        return odsreader.get_cell(column, columnbreak)
+				-- table.concat(column, columnbreak), true
       end
       return column, false
     end
@@ -141,6 +142,7 @@ rowtemplate=nil
       currenttemplate = currenttemplate or "default"
       content = {}   
       for i,row in pairs(values) do
+        -- print("call row values")
         currow, headings = rowValues(row, headings)
       	table.insert(content,table.concat(currow," & "))
       end
