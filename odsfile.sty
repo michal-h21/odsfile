@@ -9,8 +9,8 @@
 local x1,y1,x2,y2 = odsreader.getRange("\luatexluaescapestring{#1}")%
 range = {x1,y1,x2,y2}%
 }}
-\define@key{includespread}{template}{\luaexec{currenttemplate="\luatexluaescapestring{#1}"}}
-\define@key{includespread}{rowtemplate}{\luaexec{rowtemplate="\luatexluaescapestring{\unexpanded{#1}}"}}
+\define@key{includespread}{template}{\luaexec{currenttemplate="\luatexluaescapestring{#1}"}}%
+\define@key{includespread}{rowtemplate}{\luaexec{rowtemplate="\luatexluaescapestring{\unexpanded{#1}}"}}%
 
 \define@choicekey*+{includespread}{rowseparator}[\val\nr]{tableline,hline,newline}[tableline]%
 {%
@@ -18,7 +18,7 @@ range = {x1,y1,x2,y2}%
   \luaexec{rowseparator=""}%
 \or%
   \luaexec{rowseparator="\\hline "}%
-\or
+\or%
 \luaexec{%
 rowseparator=[[\\n]]
 }
