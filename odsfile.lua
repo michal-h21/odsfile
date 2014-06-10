@@ -25,7 +25,7 @@ function getTable(x,table_name)
   local tables = x.root["office:document-content"]["office:body"]["office:spreadsheet"]["table:table"]
   if #tables > 1 then
     if type(tables) == "table" and table_name ~= nil then 
-        for k,v in pairs(tables) do
+      for k,v in pairs(tables) do
           if(v["_attr"]["table:name"]==table_name) then
             return v, k
           end 
@@ -58,8 +58,8 @@ function tableValues(tbl,x1,y1,x2,y2)
           if att ~= nil and att["table:number-columns-repeated"] ~= nil then
             colRep = att["table:number-columns-repeated"]
           end
-					local x1 = x1 or 1
-					local x2 = x2 or (colRep +x1)
+          local x1 = x1 or 1
+          local x2 = x2 or (colRep +x1)
           for i = 1,colRep,1 do
             table.insert(j,{value=cellValue,attr=att})
             if #j > (x2-x1) then break end
