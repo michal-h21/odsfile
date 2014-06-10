@@ -126,6 +126,35 @@ function interp(s, tab)
   )
 end
 
+get_link = function(val)
+  local k = val["text:a"][1]
+  local href = val["text:a"]["_attr"]["xlink:href"]
+  return "\\odslink{"..href.."}{"..k.."}"
+end
+
+function get_cell(val, delim)
+  texio.write("Get cell")
+  local val = val or ""
+  local typ = type(val)
+  if typ == "string" then
+    return val
+  elseif typ == "table" then
+    if val["text:a"] then
+      return get_link(val)
+    elseif val["text:span"] then
+      return get_cell(val["text:span"], delim)
+    elseif val["text:s"] then
+      return get_cell(val["text:s"], delim)
+    else
+      local t = {}
+      for _,v in ipairs(val) do
+        local c = get_cell(v, delim)
+        table.insert(t, c)
+      end
+      return table.concat(t,delim)
+    end
+  end
+end
 
 -- Interface for adding new rows to the spreadsheet
 
