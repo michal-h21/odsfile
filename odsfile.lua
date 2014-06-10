@@ -66,7 +66,6 @@ function tableValues(tbl,x1,y1,x2,y2)
         local r = table_slice(v["table:table-cell"],x1,x2)
         for p,n in pairs(r) do
           local cellValue = n["text:p"] or ""
-          -- cellValue = string.gsub(cellValue, "#", "\\#")
           local att = n["_attr"]
           local colRep = 1
           if att ~= nil and att["table:number-columns-repeated"] ~= nil then
@@ -144,11 +143,16 @@ get_link = function(val)
   return "\\odslink{"..href.."}{"..k.."}"
 end
 
+function escape(s)
+  return string.gsub(s, "([#%%$&])", "\\%1")
+end
+
+
 function get_cell(val, delim)
   local val = val or ""
   local typ = type(val)
   if typ == "string" then
-    return val
+    return escape(val)
   elseif typ == "table" then
     if val["text:a"] then
       return get_link(val)
