@@ -98,10 +98,12 @@ rowtemplate=nil
     local values = odsreader.tableValues(body,range[1],range[2],range[3],range[4])
     %-- Conversion of odsfile table values to LaTeX tabular  
     local concatParagraphs = function(column)
+      % -- second returned value signalize whether cell contain paragraph, or not 
+		  local getCell = odsreader.get_cell
       if type(column) =="table" then 
-        return table.concat(column, columnbreak), true
+        return getCell(column, columnbreak), true
       end
-      return column, false
+      return getCell(column,""), false
     end
     local rowValues = function(row, headings)
       local headings = headings or {}
@@ -109,6 +111,7 @@ rowtemplate=nil
       local i = 1
       for _,column in pairs(row) do 
         local value, br  = concatParagraphs(column.value) 
+        value = value or ""
         table.insert(t,value)
         headings[i] = br
         i = i + 1
@@ -120,7 +123,9 @@ rowtemplate=nil
       local h = h or {}
       local p = 0
       for _, c in pairs(h) do
-        if c then p = p + 1 end 
+        if c then 
+          p = p + 1 
+        end 
       end
       if p > 0 then
         local j = {}
