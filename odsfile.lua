@@ -40,8 +40,22 @@ function getTable(x,table_name)
   end
 end
 
+function getColumnCount(tbl)
+  local tbl = tbl or {}
+  local columns = tbl["table:table-column"] or {}
+  local x = 0
+  for _, c in pairs(columns) do
+    local attr = c["_attr"] or {}
+    local rep = attr["table:number-columns-repeated"] or 1
+    x = x + rep
+  end
+  return x
+end
+
 function tableValues(tbl,x1,y1,x2,y2)
   local t= {}
+  local x1 = x1 or 1
+  local x2 = x2 or getColumnCount(tbl)
   if type(tbl["table:table-row"])=="table" then
     local rows = table_slice(tbl["table:table-row"],y1,y2)
     for k,v in pairs(rows) do
@@ -58,8 +72,6 @@ function tableValues(tbl,x1,y1,x2,y2)
           if att ~= nil and att["table:number-columns-repeated"] ~= nil then
             colRep = att["table:number-columns-repeated"]
           end
-          local x1 = x1 or 1
-          local x2 = x2 or (colRep +x1)
           for i = 1,colRep,1 do
             table.insert(j,{value=cellValue,attr=att})
             if #j > (x2-x1) then break end
@@ -133,7 +145,6 @@ get_link = function(val)
 end
 
 function get_cell(val, delim)
-  texio.write("Get cell")
   local val = val or ""
   local typ = type(val)
   if typ == "string" then
