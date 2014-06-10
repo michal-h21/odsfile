@@ -230,4 +230,14 @@ row:insert(body,pos)%
  odsreader.updateZip(odsfilename,"content.xml")%
 }%
 }
+
+% support for hyperlinks in cells
+
+\newcommand\odslink[2]{\texttt{#2}}
+
+\AtBeginDocument{%
+	\@ifpackageloaded{hyperref}{%
+		\renewcommand\odslink[2]{\href{#1}{#2}}%
+	}{}
+}
 \endinput
