@@ -52,12 +52,14 @@ function tableValues(tbl,x1,y1,x2,y2)
         local r = table_slice(v["table:table-cell"],x1,x2)
         for p,n in pairs(r) do
           local cellValue = n["text:p"] or ""
-          cellValue = string.gsub(cellValue, "#", "\\#")
+          -- cellValue = string.gsub(cellValue, "#", "\\#")
           local att = n["_attr"]
           local colRep = 1
           if att ~= nil and att["table:number-columns-repeated"] ~= nil then
             colRep = att["table:number-columns-repeated"]
-        end
+          end
+					local x1 = x1 or 1
+					local x2 = x2 or (colRep +x1)
           for i = 1,colRep,1 do
             table.insert(j,{value=cellValue,attr=att})
             if #j > (x2-x1) then break end
