@@ -2,7 +2,8 @@
 \usepackage{odsfile,tgschola,metalogo,hyperref,xspace,microtype,showexpl,booktabs,url}
 \author{Michal Hoftich (\url{michal.h21@gmail.com})}
 \title{The \textsf{odsfile} package:\\
-accessing of the \textsf{opendocument spreadsheet} from \LaTeX{} documents\thanks{Version 0.3, last revisited 2013-12-27.}
+accessing of the \textsf{opendocument spreadsheet} from \LaTeX{}
+documents\thanks{Version 0.4, last revisited 2014-06-10.}
 }
 \usepackage[english]{babel}
 \lstloadlanguages{[LaTeX]Tex} 
@@ -336,6 +337,12 @@ CC & 5 & 7
 \section{Changes}
 
 \begin{description}
+\item[v0.4]
+\begin{itemize}
+	\item Fixed bugs in loading sheets without ranges
+	\item Fixed bugs in behaviour of empty cells\footnote{Thanks to \href{https://github.com/TripleWhy}{TrippleWhy}}
+	\item Added support for children element in column paragraphs
+\end{itemize}
 \item[v0.3]
 \begin{itemize}
   \item Added support for multiline cells
