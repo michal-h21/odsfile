@@ -22,6 +22,48 @@ function load(filename)
 end
 
 function getTable(x,table_name)
+  local t = getTable0(x,table_name)
+  local t2 = {}
+
+  require 'pl.pretty'.dump(t)
+  for key, val in pairs(t) do
+    if key == "table:table-row" then
+      local rows = {}
+      
+      for i = 1, #val do
+        local r = val[i]
+        local rowRep = r["_attr"]["table:number-rows-repeated"] or 1
+
+        row = {}
+        row["_attr"] = r["_attr"]
+        local cc = r["table:table-cell"]
+        
+        local columns = {}
+        for j = 1, #cc do
+          local c = cc[j]
+          local colRep = c["_attr"]["table:number-columns-repeated"] or 1
+          for k = 1, colRep, 1 do
+            table.insert(columns, c)
+          end
+        end
+        row["table:table-cell"] = columns
+        
+        for j = 1, rowRep, 1 do
+          table.insert(rows, row)
+        end
+      end
+      
+      t2[key] = rows
+    else
+      t2[key] = val
+    end
+  end
+
+  require 'pl.pretty'.dump(t2)
+  return t2
+end
+
+function getTable0(x,table_name)
   local tables = x.root["office:document-content"]["office:body"]["office:spreadsheet"]["table:table"]
   if #tables > 1 then
     if type(tables) == "table" and table_name ~= nil then 
@@ -66,16 +108,7 @@ function tableValues(tbl,x1,y1,x2,y2)
         local r = table_slice(v["table:table-cell"],x1,x2)
         for p,n in pairs(r) do
           local cellValue = n["text:p"] or ""
-          local att = n["_attr"]
-          local colRep = 1
-          if att ~= nil and att["table:number-columns-repeated"] ~= nil then
-            colRep = att["table:number-columns-repeated"]
-          end
-          for i = 1,colRep,1 do
             table.insert(j,{value=cellValue,attr=att})
-            if #j > (x2-x1) then break end
-          end
-          if #j > (x2-x1) then break end -- hm. looks ugly.
         end
       else
         local p = {value=v["table:table-cell"]["text:p"],attr=v["table:table-cell"]["_attr"]} 
