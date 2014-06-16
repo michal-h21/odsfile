@@ -36,11 +36,13 @@ function getTable(x,table_name)
 
         row = {}
         row["_attr"] = r["_attr"]
-        local cc = r["table:table-cell"]
+        local cc = r["table:table-cell"] or {}
         
         local columns = {}
-        for j = 1, #cc do
-          local c = cc[j]
+        --for j = 1, #cc do
+         -- local c = cc[j]
+				for _, c in ipairs(cc) do
+					c["_attr"] = c["_attr"] or {}
           local colRep = c["_attr"]["table:number-columns-repeated"] or 1
           for k = 1, colRep, 1 do
             table.insert(columns, c)
