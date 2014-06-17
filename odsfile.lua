@@ -25,7 +25,6 @@ function getTable(x,table_name)
   local t = getTable0(x,table_name)
   local t2 = {}
 
-  require 'pl.pretty'.dump(t)
   for key, val in pairs(t) do
     if key == "table:table-row" then
       local rows = {}
@@ -61,7 +60,6 @@ function getTable(x,table_name)
     end
   end
 
-  require 'pl.pretty'.dump(t2)
   return t2
 end
 
