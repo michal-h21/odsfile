@@ -1,7 +1,7 @@
 module(...,package.seeall)
 require "zip"
-xmlparser = require ("luaxml-mod-xml")
-handler = require("luaxml-mod-handler")
+local xmlparser = require ("luaxml-mod-xml")
+local handler = require("luaxml-mod-handler")
 
 
 function load(filename)
