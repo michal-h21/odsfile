@@ -87,8 +87,7 @@ function getColumnCount(tbl)
   local columns = tbl["table:table-column"] or {}
   local x = 0
   for _, c in pairs(columns) do
-    local attr = c["_attr"] or {}
-    local rep = attr["table:number-columns-repeated"] or 1
+    local rep = c["table:number-columns-repeated"] or 1
     x = x + rep
   end
   return x
