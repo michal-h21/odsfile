@@ -166,7 +166,10 @@ rowtemplate=nil
           coltypes = makeColtypes(headings)
         end
       end
-      tex.print(odsreader.interp(templates[currenttemplate],{content=table.concat(content, "\\\\ "..rowseparator),coltypes=coltypes,colheading=colheading,rowsep=rowseparator}))
+      content = table.concat(content, "\\\\ "..rowseparator) .. "\\\\"
+      local result = odsreader.interp(templates[currenttemplate],{content=content,coltypes=coltypes,colheading=colheading,rowsep=rowseparator})
+      print(result)
+      tex.print(result)
     else
       local content = {}  
       currenttemplate = currenttemplate or "empty"
