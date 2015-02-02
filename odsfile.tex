@@ -162,7 +162,18 @@ number is the position of the cell from beginning of the selection.
 \begin{LTXexample}
 \includespread[range=a2:b,rowseparator={,\ },rowtemplate={\textit{-{1}}:-{2}}]
 \end{LTXexample}
+
+\item[multicoltemplate] 
+supports merged cells. Default template uses left aligned \verb|\multicolumn|
+command
+\begin{LTXexample}
+  \begin{tabular}{lll}
+  \includespread[sheet=Sheet3, multicoltemplate={\multicolumn{-{count}}{r}{-{value}}}]
+  \end{tabular}
+\end{LTXexample}
+
 \end{description} 
+
 
 \section{Templates}\label{sec:tpl}
 
@@ -339,6 +350,13 @@ CC & 5 & 7
 \section{Changes}
 
 \begin{description}
+\item[v0.5]
+\begin{itemize}
+  \item Fixed bug: cell attributes weren't saved
+  \item Added support for merged cells
+  \item Added \texttt{multicoltemplate} option
+\end{itemize}
+
 \item[v0.4]
 \begin{itemize}
 	\item Fixed bugs in loading sheets without ranges
