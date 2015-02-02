@@ -106,8 +106,9 @@ function tableValues(tbl,x1,y1,x2,y2)
       if #v["table:table-cell"] > 1 then
         local r = table_slice(v["table:table-cell"],x1,x2)
         for p,n in pairs(r) do
+          local attr = n["_attr"]
           local cellValue = n["text:p"] or ""
-            table.insert(j,{value=cellValue,attr=att})
+            table.insert(j,{value=cellValue,attr=attr})
         end
       else
         local p = {value=v["table:table-cell"]["text:p"],attr=v["table:table-cell"]["_attr"]} 
