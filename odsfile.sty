@@ -11,6 +11,7 @@ range = {x1,y1,x2,y2}%
 }}
 \define@key{includespread}{template}{\luaexec{currenttemplate="\luatexluaescapestring{#1}"}}%
 \define@key{includespread}{rowtemplate}{\luaexec{rowtemplate="\luatexluaescapestring{\unexpanded{#1}}"}}%
+\define@key{includespread}{multicoltemplate}{\luaexec{multicoltpl="\luatexluaescapestring{\unexpanded{#1}}"}}
 
 \define@choicekey*+{includespread}{rowseparator}[\val\nr]{tableline,hline,newline}[tableline]%
 {%
@@ -64,7 +65,8 @@ row         = {}
 body        = nil
 odsfilename = ""
 currenttemplate = nil
-rowtemplate=nil
+rowtemplate = nil
+multicoltpl = "\\multicolumn{-{count}}{l}{-{value}}"
 \end{luacode*}
 
 \newcommand\loadodsfile[2][]{%
@@ -110,11 +112,17 @@ rowtemplate=nil
       local t={} 
       local i = 1
       for _,column in pairs(row) do 
+        local attr = column.attr or {}
         local value, br  = concatParagraphs(column.value) 
         value = value or ""
+        local x = attr["table:number-columns-spanned"] or "1"
+        x = tonumber(x)
+        if x > 1 then 
+           value = odsreader.interp(multicoltpl, {value = value, count = x})
+        end
         table.insert(t,value)
         headings[i] = br
-        i = i + 1
+        i = i + x
       end
       return t, headings
     end
