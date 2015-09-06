@@ -3,6 +3,7 @@ require "zip"
 local xmlparser = require ("luaxml-mod-xml")
 local handler = require("luaxml-mod-handler")
 
+local namedRanges = {}
 
 function load(filename)
   local p = {
@@ -68,6 +69,7 @@ end
 
 function getTable0(x,table_name)
   local tables = x.root["office:document-content"]["office:body"]["office:spreadsheet"]["table:table"]
+  namedRanges = loadNameRanges(x, table_name)
   if #tables > 1 then
     if type(tables) == "table" and table_name ~= nil then 
       for k,v in pairs(tables) do
@@ -95,6 +97,30 @@ function getColumnCount(tbl)
   end
   return x
 end
+
+function loadNameRanges(root, tblname)
+  local tblname = tblname or ""
+  local t = {}
+  local ranges = root.root["office:document-content"]["office:body"]["office:spreadsheet"]["table:named-expressions"]
+  if not ranges then return nil end
+  ranges = ranges["table:named-range"]
+  if #ranges == 0 then 
+    ranges = {ranges}
+  end
+  for _,r in ipairs(ranges) do
+    local a = r["_attr"] or {}
+    local range = a["table:cell-range-address"]
+    local name = a["table:name"]
+    if range:match("^"..tblname) then
+      range = range:gsub("^[^%.]*",""):gsub("[%$%.]","")
+      print("named range", name, range)
+      t[name] = range
+    end
+  end
+  return t
+end
+
+
 
 
 
@@ -126,6 +152,7 @@ function tableValues(tbl,x1,y1,x2,y2)
 end
 
 function getRange(range)
+  local range = namedRanges[range] or range
   local r = range:lower()
   local function getNumber(s)
     if s == "" or s == nil then return nil end
