@@ -5,7 +5,7 @@
 \author{Michal Hoftich (\url{michal.h21@gmail.com})}
 \title{The \textsf{odsfile} package:\\
 accessing of the \textsf{opendocument spreadsheet} from \LaTeX{}
-documents\thanks{Version 0.4, last revisited 2014-12-11.}
+documents\thanks{Version 0.6, last revisited 2015-09-06.}
 }
 \usepackage[english]{babel}
 \lstloadlanguages{[LaTeX]Tex} 
@@ -350,6 +350,11 @@ CC & 5 & 7
 \section{Changes}
 
 \begin{description}
+
+\item[v0.6]
+  \begin{itemize}
+    \item  Fixed bugg in handling of rows with only one cell\footnote{Thanks to Ulrike Fisher}
+\end{itemize}
 \item[v0.5]
 \begin{itemize}
   \item Fixed bug: cell attributes weren't saved
