@@ -63,13 +63,22 @@ Options are:
 
 \begin{description}
 \item[file] Filename of file to be loaded. You should specify this only on first use of \cmd{\includespread}.
-\item[sheet] Name of sheet to be loaded. If it's not specified on first use of \cmd{\includespread}, then first sheet from the file is loaded. The sheet remains selected until another use of |sheet|.
+\item[sheet] Name of sheet to be loaded. If it's not specified on first use of
+  \cmd{\includespread}, then first sheet from the file is loaded. The sheet
+  remains selected until another use of |sheet|.
+
 \begin{LTXexample}
 \begin{tabular}{l l}
 \includespread[file=pokus.ods,sheet=List2]
 \end{tabular}     
 \end{LTXexample}
-\item[range] Selects range from table to be inserted. Range is specified in format similar to spreadsheet processors, like |a2:c4|, selecting cells starting at first column, second row and ending and third column, fourth row.
+
+\item[range] Selects range from table to be inserted. Range is specified in
+  format similar to spreadsheet processors, like |a2:c4|, selecting cells
+  starting at first column, second row and ending and third column, fourth row.
+  Other variant of supported ranges are \textit{named ranges}, which can be
+  saved in the |ods file|.
+
 \begin{LTXexample}
 \begin{tabular}{lll}
 \includespread[sheet=List1,range=a2:c4]
@@ -354,6 +363,7 @@ CC & 5 & 7
 \item[v0.6]
   \begin{itemize}
     \item  Fixed bugg in handling of rows with only one cell\footnote{Thanks to Ulrike Fisher}
+    \item  Added support for named ranges
 \end{itemize}
 \item[v0.5]
 \begin{itemize}
