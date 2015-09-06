@@ -102,15 +102,15 @@ function loadNameRanges(root, tblname)
   local tblname = tblname or ""
   local t = {}
   local ranges = root.root["office:document-content"]["office:body"]["office:spreadsheet"]["table:named-expressions"]
-  if not ranges then return nil end
-  ranges = ranges["table:named-range"]
+  if not ranges then return {} end
+  ranges = ranges["table:named-range"] or {}
   if #ranges == 0 then 
     ranges = {ranges}
   end
   for _,r in ipairs(ranges) do
     local a = r["_attr"] or {}
-    local range = a["table:cell-range-address"]
-    local name = a["table:name"]
+    local range = a["table:cell-range-address"] or ""
+    local name = a["table:name"] 
     if range:match("^"..tblname) then
       range = range:gsub("^[^%.]*",""):gsub("[%$%.]","")
       print("named range", name, range)
