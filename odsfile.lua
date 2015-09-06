@@ -36,6 +36,9 @@ function getTable(x,table_name)
         row = {}
         row["_attr"] = r["_attr"]
         local cc = r["table:table-cell"] or {}
+        if #cc == 0 then
+          cc = {cc}
+        end
         
         local columns = {}
         --for j = 1, #cc do
@@ -93,6 +96,8 @@ function getColumnCount(tbl)
   return x
 end
 
+
+
 function tableValues(tbl,x1,y1,x2,y2)
   local t= {}
   local x1 = x1 or 1
@@ -108,7 +113,7 @@ function tableValues(tbl,x1,y1,x2,y2)
         for p,n in pairs(r) do
           local attr = n["_attr"]
           local cellValue = n["text:p"] or ""
-            table.insert(j,{value=cellValue,attr=attr})
+          table.insert(j,{value=cellValue,attr=attr})
         end
       else
         local p = {value=v["table:table-cell"]["text:p"],attr=v["table:table-cell"]["_attr"]} 
