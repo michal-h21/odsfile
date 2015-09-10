@@ -111,7 +111,7 @@ function loadNameRanges(root, tblname)
     local a = r["_attr"] or {}
     local range = a["table:cell-range-address"] or ""
     local name = a["table:name"] 
-    if range:match("^"..tblname) then
+    if name and range:match("^"..tblname) then
       range = range:gsub("^[^%.]*",""):gsub("[%$%.]","")
       print("named range", name, range)
       t[name] = range
