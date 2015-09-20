@@ -362,8 +362,11 @@ CC & 5 & 7
 
 \item[v0.6]
   \begin{itemize}
-    \item  Fixed bugg in handling of rows with only one cell\footnote{Thanks to Ulrike Fisher}
+    \item  Fixed bug in handling of rows with only one cell\footnote{Thanks to Ulrike Fisher}
     \item  Added support for named ranges
+    \item  Fixed text:s handling. Beware that using multiple formatting styles
+      in one cell may result in discarding whole cell, or wrong order. This is
+      caused by underlying LuaXML library and it is likely to remain.
 \end{itemize}
 \item[v0.5]
 \begin{itemize}
