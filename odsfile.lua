@@ -1,5 +1,9 @@
-module(...,package.seeall)
-require "zip"
+-- Package odsfile. Author Michal Hoftich <michal.h21@gmail.com>
+-- This package is subject of LPPL license, version 1.3 
+-- module(...,package.seeall)
+
+local M = {}
+local zip = require "zip"
 local xmlparser = require ("luaxml-mod-xml")
 local handler = require("luaxml-mod-handler")
 
@@ -298,3 +302,29 @@ function updateZip(zipfile, updatefile)
   local command  =  string.format("zip %s %s",zipfile, updatefile)
   print ("Updating an ods file.\n" ..command .."\n Return code: ", os.execute(command))  
 end
+
+M.load= load
+M.loadContent  =    loadContent  
+M.getTable= getTable
+M.getTable0= getTable0
+M.getColumnCount= getColumnCount
+M.loadNameRanges= loadNameRanges
+M.tableValues= tableValues
+M.getRange= getRange
+M.getNumber=  getNumber
+M.table_slice = table_slice 
+M.interp= interp
+M.get_link  =get_link  
+M.escape= escape
+M.get_cell= get_cell
+M.newRow= newRow
+    -- Generic  for inserting cell
+M.addCell  =    addCell  
+M.addString  =    addString  
+M.addFloat  =    addFloat  
+M.findLastRow  =    findLastRow  
+M.insert  =    insert  
+--  for updateing the archive. Depends on external zip utility
+M.updateZip= updateZip
+
+return M
