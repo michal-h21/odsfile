@@ -15,6 +15,7 @@ function load(filename)
     content_file_name = "content.xml",
     loadContent = function(self,filename)
       local treehandler = handler.simpleTreeHandler()
+      -- treehandler.options.noReduce = {["table:table-cell"]=true, ["text:p"]=true}
       local filename = filename or self.content_file_name  
       local xmlfile = self.file:open(filename)
       local text = xmlfile:read("*a")
@@ -213,7 +214,11 @@ get_link = function(val)
 end
 
 function escape(s)
-  return string.gsub(s, "([#%%$&])", "\\%1")
+  return string.gsub(s, "([%\\]?)([#%%$&])", function(a,b)
+    if a=="" then 
+      return "\\"..b 
+    end
+  end)
 end
 
 function get_cell(val, delim)
@@ -228,7 +233,7 @@ function get_cell(val, delim)
       return get_cell(val["text:span"], delim)
     elseif val["text:s"] then
       -- return get_cell(val["text:s"], delim)
-      return table.concat(val, " ")
+      return escape(table.concat(val, " "))
     else
       local t = {}
       for _,v in ipairs(val) do
