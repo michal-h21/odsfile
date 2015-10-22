@@ -16,6 +16,9 @@ range = {x1,y1,x2,y2}%
 \define@key{includespread}{rowtemplate}{\luaexec{rowtemplate="\luatexluaescapestring{\unexpanded{#1}}"}}%
 \define@key{includespread}{multicoltemplate}{\luaexec{multicoltpl="\luatexluaescapestring{\unexpanded{#1}}"}}%
 
+\newcommand\OdsNL{\\}
+\newcommand\OdsLastNl{\\}
+
 \define@choicekey*+{includespread}{rowseparator}[\val\nr]{tableline,hline,newline}[tableline]%
 {%
 \ifcase\nr\relax%
@@ -169,7 +172,7 @@ multicoltpl = "\\multicolumn{-{count}}{l}{-{value}}"
       	local t = odsreader.tableValues(body,range[1],1,range[3],2)
       	columns = rowValues(t[1])
       end  
-      if type(columns) == "table" then colheading = table.concat(columns," & ") .. "\\\\" end
+      if type(columns) == "table" then colheading = table.concat(columns," & ") .. "\\OdsNL " end
       % coltypes = ""
       if type(content)== "table" then 
         % coltypes= string.rep("l",\#content[1]) 
@@ -177,7 +180,7 @@ multicoltpl = "\\multicolumn{-{count}}{l}{-{value}}"
           coltypes = makeColtypes(headings)
         end
       end
-      content = table.concat(content, "\\\\ "..rowseparator) .. "\\\\"
+      content = table.concat(content, "\\OdsNL "..rowseparator) .. "\\OdsLastNl"
       local result = odsreader.interp(templates[currenttemplate],{content=content,coltypes=coltypes,colheading=colheading,rowsep=rowseparator})
       print(result)
       tex.print(result)
@@ -205,7 +208,7 @@ multicoltpl = "\\multicolumn{-{count}}{l}{-{value}}"
 -{colheading}
 \midrule
 -{content}
-\\ \bottomrule
+\bottomrule
 \end{tabular}
 }
 
