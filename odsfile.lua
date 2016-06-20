@@ -34,6 +34,7 @@ function getTable(x,table_name)
   for key, val in pairs(t) do
     if key == "table:table-row" then
       local rows = {}
+      if #val == 0 then val = {val} end
       
       for i = 1, #val do
         local r = val[i]
