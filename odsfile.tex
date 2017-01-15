@@ -8,7 +8,7 @@
 \author{Michal Hoftich (\url{michal.h21@gmail.com})}
 \title{The \textsf{odsfile} package:\\
 accessing of the \textsf{opendocument spreadsheet} from \LaTeX{}
-documents\thanks{Version 0.6, last revisited 2015-09-20.}
+documents\thanks{Version 0.7, last revisited 2017-01-15.}
 }
 \usepackage[english]{babel}
 \lstloadlanguages{[LaTeX]Tex} 
@@ -371,6 +371,7 @@ CC & 5 & 7
        \item Fixed escaping. Unescaped ``\%,\#,\$ and \&'' will be escaped,
          they will be leaved untouched if they are escaped already\footnote{Thanks to
            Wybo Dekker} 
+         \item Added support for LuaTeX -recorder command line option
      \end{itemize}
 
 \item[v0.6]
