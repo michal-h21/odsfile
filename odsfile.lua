@@ -10,6 +10,10 @@ local handler = require("luaxml-mod-handler")
 local namedRanges = {}
 
 function load(filename)
+  -- add support for -reader command line option
+  -- we must open the file and close it immediatelly 
+  local f = io.open(filename, "r")
+  f:close()
   local p = {
     file = zip.open(filename),
     content_file_name = "content.xml",
