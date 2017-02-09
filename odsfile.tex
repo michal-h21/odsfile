@@ -179,6 +179,14 @@ number is the position of the cell from beginning of the selection.
 \includespread[range=a2:b,rowseparator={,\ },rowtemplate={\textit{-{1}}:-{2}}]
 \end{LTXexample}
 
+\item[celltemplate] This template is applied to every cell in the included table.
+  \begin{LTXexample}
+    \begin{tabular}{lll}
+      \includespread[range=a1:c1,celltemplate={\textit{-{value}}}]
+      \includespread[range=a2:c]
+    \end{tabular}
+  \end{LTXexample}
+
 \item[multicoltemplate] 
 supports merged cells. Default template uses left aligned \verb|\multicolumn|
 command
@@ -372,6 +380,7 @@ CC & 5 & 7
          they will be leaved untouched if they are escaped already\footnote{Thanks to
            Wybo Dekker} 
          \item Added support for LuaTeX -recorder command line option
+       \item Added \texttt{celltemplate} option
      \end{itemize}
 
 \item[v0.6]
