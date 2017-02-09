@@ -13,7 +13,8 @@ local x1,y1,x2,y2 = odsreader.getRange("\luatexluaescapestring{#1}")%
 range = {x1,y1,x2,y2}%
 }}
 \define@key{includespread}{template}{\luaexec{currenttemplate="\luatexluaescapestring{#1}"}}%
-\define@key{includespread}{rowtemplate}{\luaexec{rowtemplate="\luatexluaescapestring{\unexpanded{#1}}"}}%
+\define@key{includespread}{rowtemplate}{\luaexec{rowtemplate="\luatexluaescapestring{\detokenize{#1}}"}}%
+\define@key{includespread}{celltemplate}{\luaexec{celltpl="\luatexluaescapestring{\detokenize{#1}}"}}%
 \define@key{includespread}{multicoltemplate}{\luaexec{multicoltpl="\luatexluaescapestring{\unexpanded{#1}}"}}%
 
 \newcommand\OdsNl{\\}
@@ -72,6 +73,7 @@ body        = nil
 odsfilename = ""
 currenttemplate = nil
 rowtemplate = nil
+celltpl   = "-{value}"
 multicoltpl = "\\multicolumn{-{count}}{l}{-{value}}"
 \end{luacode*}
 
@@ -110,6 +112,7 @@ multicoltpl = "\\multicolumn{-{count}}{l}{-{value}}"
     columns=nil
     currenttemplate = nil 
     rowtemplate = nil
+    celltpl = "-{value}"
     columnbreak = "\\linebreak{}"
     coltypes    = nil
   }%
@@ -138,6 +141,8 @@ multicoltpl = "\\multicolumn{-{count}}{l}{-{value}}"
         x = tonumber(x)
         if x > 1 then 
            value = odsreader.interp(multicoltpl, {value = value, count = x})
+        else
+          value = odsreader.interp(celltpl, {value = value})
         end
         table.insert(t,value)
         headings[i] = br
