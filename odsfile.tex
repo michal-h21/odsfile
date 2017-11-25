@@ -109,6 +109,13 @@ You can omit some or both of the numbers:
 \includespread[range=b2:c]
 \end{tabular}     
 \end{LTXexample}  
+
+\begin{LTXexample}
+\begin{tabular}{lll}
+\includespread[range=newrangetest]
+\end{tabular}     
+\end{LTXexample}  
+
 \item[columns] Column heading specification. It can be either |head|, |top|, or comma separated list of values.
 \begin{description}
 \item[top] Use as headers first line from the table.
@@ -381,6 +388,7 @@ CC & 5 & 7
            Wybo Dekker} 
          \item Added support for LuaTeX -recorder command line option
        \item Added \texttt{celltemplate} option
+       \item Fixed named range handling\footnote{Thanks to Angelforest}
      \end{itemize}
 
 \item[v0.6]

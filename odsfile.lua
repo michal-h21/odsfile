@@ -121,7 +121,7 @@ function loadNameRanges(root, tblname)
     local a = r["_attr"] or {}
     local range = a["table:cell-range-address"] or ""
     local name = a["table:name"] 
-    if name and range:match("^"..tblname) then
+    if name and range:match("^$?"..tblname) then
       range = range:gsub("^[^%.]*",""):gsub("[%$%.]","")
       print("named range", name, range)
       t[name] = range
@@ -162,6 +162,7 @@ function tableValues(tbl,x1,y1,x2,y2)
 end
 
 function getRange(range)
+  if range == nil then return {nil,nil,nil,nil} end
   local range = namedRanges[range] or range
   local r = range:lower()
   local function getNumber(s)
@@ -174,7 +175,7 @@ function getRange(range)
     return f
   end
   for x1,y1,x2,y2 in r:gmatch("(%a*)(%d*):*(%a*)(%d*)") do
-    return getNumber(x1),tonumber(y1),getNumber(x2),tonumber(y2) 
+    return {getNumber(x1),tonumber(y1),getNumber(x2),tonumber(y2)}
    --print(string.format("%s, %s, %s, %s",getNumber(x1),y1,getNumber(x2),y2))
   end
 end
