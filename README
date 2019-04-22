@@ -34,7 +34,7 @@ Basic usage
 
 ...
 
-\includespread[\begin{tabular}{l l}
+\begin{tabular}{l l}
 \includespread[file=pokus.ods]
 \end{tabular}
 
