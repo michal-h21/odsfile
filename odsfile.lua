@@ -1,5 +1,5 @@
 -- Package odsfile. Author Michal Hoftich <michal.h21@gmail.com>
--- This package is subject of LPPL license, version 1.3 
+-- This package is subject of LPPL license, version 1.3c
 -- module(...,package.seeall)
 
 local M = {}
@@ -214,9 +214,17 @@ function interp(s, tab)
 end
 
 function escape(s)
-  return string.gsub(s, "([%\\]?)([#%%%$&_])", function(a,b)
+  return string.gsub(s, "([%\\]?)([#%%%$&_%{%}%\\|])", function(a,b)
     if a=="" then 
-      return "\\"..b 
+      if b == "\\" then
+        return "\\textbackslash"
+      elseif b == "|" then
+        return "\\textbar"
+      else
+        return "\\"..b 
+      end
+    elseif a=="\\" and b=="\\" then
+        return "\\textbackslash\\textbackslash"
     end
   end)
 end
