@@ -213,19 +213,20 @@ function interp(s, tab)
   )
 end
 
-get_link = function(val)
-  local k = val["text:a"][1]
-  local href = val["text:a"]["_attr"]["xlink:href"]
-  return "\\odslink{"..href.."}{"..k.."}"
-end
-
 function escape(s)
-  return string.gsub(s, "([%\\]?)([#%%$&])", function(a,b)
+  return string.gsub(s, "([%\\]?)([#%%%$&_])", function(a,b)
     if a=="" then 
       return "\\"..b 
     end
   end)
 end
+
+get_link = function(val)
+  local k = val["text:a"][1]
+  local href = val["text:a"]["_attr"]["xlink:href"]
+  return "\\odslink{"..href.."}{".. escape(k).."}"
+end
+
 
 function get_cell(val, delim)
   local val = val or ""
