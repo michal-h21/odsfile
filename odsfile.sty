@@ -142,7 +142,8 @@ multicoltpl = "\\multicolumn{-{count}}{l}{-{value}}"
         else
           value = odsreader.interp(celltpl, {value = value})
         end
-        table.insert(t,value)
+        % table.insert(t,value)
+        t[i] = value
         headings[i] = br
         i = i + x
       end
