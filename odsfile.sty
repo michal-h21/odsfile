@@ -13,6 +13,7 @@
 \define@key{includespread}{rowtemplate}{\luaexec{rowtemplate="\luatexluaescapestring{\detokenize{#1}}"}}%
 \define@key{includespread}{celltemplate}{\luaexec{celltpl="\luatexluaescapestring{\detokenize{#1}}"}}%
 \define@key{includespread}{multicoltemplate}{\luaexec{multicoltpl="\luatexluaescapestring{\unexpanded{#1}}"}}%
+\define@key{includespread}{escape}{\luaexec{latexescape="\luatexluaescapestring{\unexpanded{#1}}"}}%
 
 \newcommand\OdsNl{\\}
 \newcommand\OdsLastNl{\\}
@@ -72,6 +73,7 @@ currenttemplate = nil
 rowtemplate = nil
 celltpl   = "-{value}"
 multicoltpl = "\\multicolumn{-{count}}{l}{-{value}}"
+latexescape = "true"
 \end{luacode*}
 
 \newcommand\loadodsfile[2][]{%
@@ -112,6 +114,7 @@ multicoltpl = "\\multicolumn{-{count}}{l}{-{value}}"
     celltpl = "-{value}"
     columnbreak = "\\linebreak{}"
     coltypes    = nil
+    latexescape = "true"
   }%
   \setkeys{includespread}{#1}%
   \luaexec{%

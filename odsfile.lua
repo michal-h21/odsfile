@@ -214,19 +214,23 @@ function interp(s, tab)
 end
 
 function escape(s)
-  return string.gsub(s, "([%\\]?)([#%%%$&_%{%}%\\|])", function(a,b)
-    if a=="" then 
-      if b == "\\" then
-        return "\\textbackslash"
-      elseif b == "|" then
-        return "\\textbar"
-      else
-        return "\\"..b 
+  if latexescape=="true" then
+    return string.gsub(s, "([%\\]?)([#%%%$&_%{%}%\\|])", function(a,b)
+      if a=="" then 
+        if b == "\\" then
+          return "\\textbackslash{}"
+        elseif b == "|" then
+          return "\\textbar{}"
+        else
+          return "\\"..b 
+        end
+      elseif a=="\\" and b=="\\" then
+        return "\\textbackslash\\textbackslash{}"
       end
-    elseif a=="\\" and b=="\\" then
-        return "\\textbackslash\\textbackslash"
-    end
-  end)
+    end)
+  else
+    return s
+  end
 end
 
 get_link = function(val)

@@ -205,6 +205,16 @@ command
 
 \end{description} 
 
+\subsection{Character escaping}
+
+
+
+\begin{LTXexample}
+\begin{tabular}{lll}
+\includespread[sheet=List1,columns=head,escape=false]
+\end{tabular}     
+\end{LTXexample}
+
 
 \section{Templates}\label{sec:tpl}
 
@@ -383,7 +393,9 @@ CC & 5 & 7
 \begin{description}
   \item[devel]
     \begin{itemize}
+      \item added the escape option for enabling or disabling of the character escaping
       \item fixed handling of merged cells in ranges
+      \item fixed escaping of backslashes
     \end{itemize}
    \item[v0.7]
      \begin{itemize}
