@@ -36,7 +36,7 @@ This is \LuaLaTeX{} package and \textsf{lua} library for working with
 Their contents can be read as \LaTeX{} tables, can be pass to macros,
  you can also add new data to existing spreadsheets.
 
-\ods format consist of number of |xml| files packed in the |zip| file. 
+The \ods format consist of number of |xml| files packed in the |zip| file. 
 This package uses \LuaTeX's zip library, LuaXML library\footnote{Pure |lua| library 
 for working with |xml| files, it is available form CTAN or \url{https://github.com/michal-h21/LuaXML}} and lua scripting to read |xml| content from this archive, 
 which means that it is not possible to use this package with pdf\LaTeX{} or \XeLaTeX. 
@@ -207,7 +207,17 @@ command
 
 \subsection{Character escaping}
 
+To prevent compilation errors, \textsf{odsfile} escapes characters that have special meaning in \LaTeX, 
+for example backslashes or dollar characters. In some cases, you may want to
+execute the \TeX\ code that is saved in the spreadsheet. In that case, use the \texttt{escape} option:
 
+\begin{description}
+
+\item[escape] Set the value to false to ignore special characters in the cell data.
+\end{description}
+
+The following example prints the left cell in the last row in table in bold, because the original 
+spreadsheet contains the \verb|\textbf{bold}| command.
 
 \begin{LTXexample}
 \begin{tabular}{lll}
