@@ -292,7 +292,7 @@ Position specifies cell, where data should be added, if you leave it blank, it w
 
 You can explicitly load \ods file with \marginpar{\cmd{\loadodsfile}}\cmd{\loadodsfile}\oarg{key val list}\marg{filename}. This can be useful, if you only want to write some data to the file, otherwise it is better to use \cmd{\includespread}.
 
-For saving spreadsheets modified with |AddRow|, you can use \cmd{\savespreadsheet}\marginpar{\cmd{\savespreadsheet}}. This command uses call to external |zip| utility, so you should have installed it and you have to call lua\LaTeX with |lualatex --shell-escape filename|. Lua\LaTeX also must have write permissions for accessing the \ods file. This command creates file |content.xml| in the current directory, so if externall call fails, you can run
+For saving spreadsheets modified with |AddRow|, you can use \cmd{\savespreadsheet}\marginpar{\cmd{\savespreadsheet}}. This command uses call to external |zip| utility, so you should have installed it and you have to call Lua\LaTeX\ with |lualatex --shell-escape filename|. Lua\LaTeX\ also must have write permissions for accessing the \ods file. This command creates file |content.xml| in the current directory, so if externall call fails, you can run
 \begin{verbatim}
 zip -r filename.ods content.xml
 \end{verbatim} 
