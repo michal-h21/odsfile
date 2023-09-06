@@ -42,7 +42,8 @@ function getTable(x,table_name)
       
       for i = 1, #val do
         local r = val[i]
-        local rowRep = r["_attr"]["table:number-rows-repeated"] or 1
+        local rattr = r["_attr"] or {}
+        local rowRep = rattr["table:number-rows-repeated"] or 1
 
         row = {}
         row["_attr"] = r["_attr"]
@@ -272,6 +273,7 @@ function newRow()
     cells = {},
     -- Generic function for inserting cell
     addCell = function(self,val, attr,pos)
+      local attr = attr or {}
       if pos then
         table.insert(self.cells,pos,{["text:p"] = val, ["_attr"] = attr})
         self.pos = pos
@@ -302,7 +304,7 @@ function newRow()
       return #sheet["table:table-row"]+1
     end,
     insert = function(self, sheet, pos)
-      local t = {}
+      local t = {_attr = {}}
       local pos = pos or self:findLastRow(sheet)
       print("pos je: ",pos)
       if sheet["table:table-column"]["_attr"] and sheet["table:table-column"]["_attr"]["table:number-columns-repeated"] then
@@ -311,9 +313,9 @@ function newRow()
         table_columns = #sheet["table:table-column"]
       end
       for i=1, table_columns do
-        table.insert(t,self.cells[i] or {})  
+        table.insert(t,self.cells[i] or {_attr={}})  
       end
-      t = {["table:table-cell"]=t}
+      t = {["table:table-cell"]=t, _attr = {}}
       table.insert(sheet["table:table-row"],pos,t)
     end
   }

@@ -255,6 +255,8 @@ if pos == "" then pos = nil end; row = odsreader.newRow()%
 \luaexec{%
 body = body or odsreader.getTable(odsfile)
 row:insert(body,pos)%
+% we must save the updated table to the original table
+odsfile.root["office:document-content"]["office:body"]["office:spreadsheet"]["table:table"] = body%
 }%
 }
 
