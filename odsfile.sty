@@ -57,6 +57,13 @@ columns = split(s,",")
 }%
 }{}%
 
+\define@key{includespread}{newline}{%
+  \luaexec{odsnl="\luatexluaescapestring{\unexpanded{#1}}"}%
+}
+
+\define@key{includespread}{lastnewline}{%
+  \luaexec{odslastnl="\luatexluaescapestring{\unexpanded{#1}}"}%
+}
 
 % Variable initialization and helper functions
 \begin{luacode*}
@@ -74,6 +81,8 @@ rowtemplate = nil
 celltpl   = "-{value}"
 multicoltpl = "\\multicolumn{-{count}}{l}{-{value}}"
 latexescape = "true"
+odsnl       = "\\OdsNl"
+odslastnl   = "\\OdsLastNl"
 \end{luacode*}
 
 \newcommand\loadodsfile[2][]{%
@@ -192,7 +201,7 @@ latexescape = "true"
       	local t = odsreader.tableValues(body,real_range[1],1,real_range[3],2)
       	columns = rowValues(t[1])
       end  
-      if type(columns) == "table" then colheading = table.concat(columns," & ") .. "\\OdsNl " end
+      if type(columns) == "table" then colheading = table.concat(columns," & ") .. odsnl .. " " end
       % coltypes = ""
       if type(content)== "table" then 
         % coltypes= string.rep("l",\#content[1]) 
@@ -200,10 +209,10 @@ latexescape = "true"
           coltypes = makeColtypes(headings)
         end
       end
-      content = table.concat(content, "\\OdsNl "..rowseparator) .. "\\OdsLastNl"
+      content = table.concat(content, odsnl .. " " ..rowseparator) .. odslastnl
       local result = odsreader.interp(templates[currenttemplate],{content=content,coltypes=coltypes,colheading=colheading,rowsep=rowseparator})
       print(result)
-      tex.print(result)
+      tex.sprint(result)
     else
       local content = {}  
       currenttemplate = currenttemplate or "empty"
