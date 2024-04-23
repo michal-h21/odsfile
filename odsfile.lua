@@ -162,8 +162,15 @@ function tableValues(tbl,x1,y1,x2,y2)
   return t
 end
 
+function join(tbl1, tbl2)
+  for _, x in ipairs(tbl2) do
+    tbl1[#tbl1+1] = x
+  end
+  return tbl1
+end
+
 function getRange(range)
-  if range == nil then return {nil,nil,nil,nil} end
+  if range == nil then return {{nil,nil,nil,nil}} end
   local range = namedRanges[range] or range
   local r = range:lower()
   local function getNumber(s)
@@ -175,10 +182,12 @@ function getRange(range)
     end
     return f
   end
+  local ranges = {}
   for x1,y1,x2,y2 in r:gmatch("(%a*)(%d*):*(%a*)(%d*)") do
-    return {getNumber(x1),tonumber(y1),getNumber(x2),tonumber(y2)}
+    ranges[#ranges+1] =  {getNumber(x1),tonumber(y1),getNumber(x2),tonumber(y2)}
    --print(string.format("%s, %s, %s, %s",getNumber(x1),y1,getNumber(x2),y2))
   end
+  return ranges
 end
 
 function table_slice (values,i1,i2)
@@ -336,6 +345,7 @@ M.getTable0= getTable0
 M.getColumnCount= getColumnCount
 M.loadNameRanges= loadNameRanges
 M.tableValues= tableValues
+M.join = join
 M.getRange= getRange
 M.getNumber=  getNumber
 M.table_slice = table_slice 
