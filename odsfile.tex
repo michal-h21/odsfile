@@ -241,8 +241,13 @@ Use the \texttt{save} option to save the generated table to a file instead of in
 
 \begin{LTXexample}
 There should be no table listed
-\includespread[sheet=List1,columns=head,escape=false,save=save-test.tex]
+\includespread[sheet=List1,columns=head,escape=false,save=save-test.tex,debug=true]
 \end{LTXexample}
+
+\subsection{Debugging}
+
+You can print the generated table to the terminal output of \LaTeX\ using the \texttt{debug} option. Possible values are 
+\texttt{true} and \texttt{false}.
 
 
 \section{Templates}\label{sec:tpl}
@@ -422,7 +427,7 @@ CC & 5 & 7
 \begin{description}
   \item [devel]
     \begin{itemize}
-      \item added the \texttt{save} option
+      \item added the \texttt{save} and \texttt{debug }options
       \item added support for multiple ranges in the \texttt{range} option
       \item added \texttt{newline} and \texttt{lastnewline} options
     \end{itemize}

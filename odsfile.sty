@@ -40,6 +40,10 @@ rowseparator=[[\\n]]
   \luaexec{odssave="\luatexluaescapestring{#1}"}%
 }
 
+\define@key{includespread}{debug}{% use either true or false
+  \luaexec{odsdebug=\luatexluaescapestring{#1}}%
+}
+
 \define@key{includespread}{coltypes}{%
   \luaexec{coltypes="\luatexluaescapestring{\unexpanded{#1}}"}%
 }
@@ -70,6 +74,8 @@ columns = split(s,",")
   \luaexec{odslastnl="\luatexluaescapestring{\unexpanded{#1}}"}%
 }
 
+
+
 % Variable initialization and helper functions
 \begin{luacode*}
 odsreader   = require("odsfile")
@@ -80,6 +86,7 @@ columns     = nil
 templates   = {}
 row         = {}
 odssave     = nil
+odsdebug    = nil
 body        = nil
 odsfilename = ""
 currenttemplate = nil
@@ -126,6 +133,7 @@ odslastnl   = "\\OdsLastNl"
     columns=nil
     currenttemplate = nil 
     odssave = nil
+    odsdebug = false
     rowtemplate = nil
     celltpl = "-{value}"
     columnbreak = "\\linebreak{}"
@@ -224,7 +232,9 @@ odslastnl   = "\\OdsLastNl"
       end
       content = table.concat(content, odsnl .. " " ..rowseparator) .. odslastnl
       local result = odsreader.interp(templates[currenttemplate],{content=content,coltypes=coltypes,colheading=colheading,rowsep=rowseparator})
-      print(result)
+      if odsdebug then
+        print(result)
+      end
       if odssave then
         odsreader.save(odssave, result)
       else
@@ -238,7 +248,9 @@ odslastnl   = "\\OdsLastNl"
       end
       content = table.concat(content,rowseparator) 
       local result = odsreader.interp(templates[currenttemplate],{content=content,coltypes=coltypes,colheading=colheading,rowsep=rowseparator})
-      print(result)
+      if odsdebug then
+        print(result)
+      end
       if odssave then
         odsreader.save(odssave, result)
       else
