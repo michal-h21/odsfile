@@ -35,6 +35,11 @@ rowseparator=[[\\n]]
 \define@key{includespread}{columnbreak}{%
   \luaexec{columnbreak="\luatexluaescapestring{\unexpanded{#1}}{}"}%
 }
+
+\define@key{includespread}{save}{%
+  \luaexec{odssave="\luatexluaescapestring{#1}"}%
+}
+
 \define@key{includespread}{coltypes}{%
   \luaexec{coltypes="\luatexluaescapestring{\unexpanded{#1}}"}%
 }
@@ -74,6 +79,7 @@ range       = {nil,nil,nil,nil}
 columns     = nil
 templates   = {}
 row         = {}
+odssave     = nil
 body        = nil
 odsfilename = ""
 currenttemplate = nil
@@ -119,6 +125,7 @@ odslastnl   = "\\OdsLastNl"
     rowseparator = ""
     columns=nil
     currenttemplate = nil 
+    odssave = nil
     rowtemplate = nil
     celltpl = "-{value}"
     columnbreak = "\\linebreak{}"
@@ -218,7 +225,11 @@ odslastnl   = "\\OdsLastNl"
       content = table.concat(content, odsnl .. " " ..rowseparator) .. odslastnl
       local result = odsreader.interp(templates[currenttemplate],{content=content,coltypes=coltypes,colheading=colheading,rowsep=rowseparator})
       print(result)
-      tex.sprint(result)
+      if odssave then
+        odsreader.save(odssave, result)
+      else
+        tex.sprint(result)
+      end
     else
       local content = {}  
       currenttemplate = currenttemplate or "empty"
@@ -228,7 +239,11 @@ odslastnl   = "\\OdsLastNl"
       content = table.concat(content,rowseparator) 
       local result = odsreader.interp(templates[currenttemplate],{content=content,coltypes=coltypes,colheading=colheading,rowsep=rowseparator})
       print(result)
-      tex.sprint(result)
+      if odssave then
+        odsreader.save(odssave, result)
+      else
+        tex.sprint(result)
+      end
     end
   }%
 }%

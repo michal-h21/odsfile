@@ -235,6 +235,15 @@ spreadsheet contains the \verb|\textbf{bold}| command.
 \end{tabular}     
 \end{LTXexample}
 
+\subsection{Saving the generated table to a file}
+
+Use the \texttt{save} option to save the generated table to a file instead of including it directly into the document.
+
+\begin{LTXexample}
+There should be no table listed
+\includespread[sheet=List1,columns=head,escape=false,save=save-test.tex]
+\end{LTXexample}
+
 
 \section{Templates}\label{sec:tpl}
 
@@ -413,7 +422,8 @@ CC & 5 & 7
 \begin{description}
   \item [devel]
     \begin{itemize}
-      \item added support for multiple ranges in the \texttt{range} option.
+      \item added the \texttt{save} option
+      \item added support for multiple ranges in the \texttt{range} option
       \item added \texttt{newline} and \texttt{lastnewline} options
     \end{itemize}
   \item[v0.8]

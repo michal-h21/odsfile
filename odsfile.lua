@@ -338,6 +338,12 @@ function updateZip(zipfile, updatefile)
   print ("Updating an ods file.\n" ..command .."\n Return code: ", os.execute(command))  
 end
 
+function save(filename, content)
+  local f = io.open(filename, "w")
+  f:write(content)
+  f:close()
+end
+
 M.load= load
 M.loadContent  =    loadContent  
 M.getTable= getTable
@@ -362,5 +368,6 @@ M.findLastRow  =    findLastRow
 M.insert  =    insert  
 --  for updateing the archive. Depends on external zip utility
 M.updateZip= updateZip
+M.save = save
 
 return M
