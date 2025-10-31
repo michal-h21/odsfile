@@ -31,6 +31,52 @@ local function load(filename)
   return p
 end
 
+local function loadNameRanges(root, tblname)
+  local tblname = tblname or ""
+  local t = {}
+  local ranges = root.root["office:document-content"]["office:body"]["office:spreadsheet"]["table:named-expressions"]
+  if not ranges then return {} end
+  ranges = ranges["table:named-range"] or {}
+  if #ranges == 0 then 
+    ranges = {ranges}
+  end
+  for _,r in ipairs(ranges) do
+    local a = r["_attr"] or {}
+    local range = a["table:cell-range-address"] or ""
+    local name = a["table:name"] 
+    if name and range:match("^$?"..tblname) then
+      range = range:gsub("^[^%.]*",""):gsub("[%$%.]","")
+      print("named range", name, range)
+      t[name] = range
+    end
+  end
+  return t
+end
+
+
+
+
+local function getTable0(x,table_name)
+  local tables = x.root["office:document-content"]["office:body"]["office:spreadsheet"]["table:table"]
+  namedRanges = loadNameRanges(x, table_name)
+  if #tables > 1 then
+    if type(tables) == "table" and table_name ~= nil then 
+      for k,v in pairs(tables) do
+          if(v["_attr"]["table:name"]==table_name) then
+            return v, k
+          end 
+        end
+    elseif type(tables) == "table" and table_name == nil then
+      return tables[1], 1  
+    else 
+      return tables  
+    end
+  else 
+    return tables
+  end
+end
+
+
 local function getTable(x,table_name)
   local t = getTable0(x,table_name)
   local t2 = {}
@@ -78,26 +124,6 @@ local function getTable(x,table_name)
   return t2
 end
 
-local function getTable0(x,table_name)
-  local tables = x.root["office:document-content"]["office:body"]["office:spreadsheet"]["table:table"]
-  namedRanges = loadNameRanges(x, table_name)
-  if #tables > 1 then
-    if type(tables) == "table" and table_name ~= nil then 
-      for k,v in pairs(tables) do
-          if(v["_attr"]["table:name"]==table_name) then
-            return v, k
-          end 
-        end
-    elseif type(tables) == "table" and table_name == nil then
-      return tables[1], 1  
-    else 
-      return tables  
-    end
-  else 
-    return tables
-  end
-end
-
 local function getColumnCount(tbl)
   local tbl = tbl or {}
   local columns = tbl["table:table-column"] or {}
@@ -109,31 +135,29 @@ local function getColumnCount(tbl)
   return x
 end
 
-local function loadNameRanges(root, tblname)
-  local tblname = tblname or ""
-  local t = {}
-  local ranges = root.root["office:document-content"]["office:body"]["office:spreadsheet"]["table:named-expressions"]
-  if not ranges then return {} end
-  ranges = ranges["table:named-range"] or {}
-  if #ranges == 0 then 
-    ranges = {ranges}
+
+local function table_slice (values,i1,i2)
+  -- Function from http://snippets.luacode.org/snippets/Table_Slice_116
+  local res = {}
+  local n = #values
+  -- default values for range
+  i1 = i1 or 1
+  i2 = i2 or n
+  if i2 < 0 then
+    i2 = n + i2 + 1
+  elseif i2 > n then
+    i2 = n
   end
-  for _,r in ipairs(ranges) do
-    local a = r["_attr"] or {}
-    local range = a["table:cell-range-address"] or ""
-    local name = a["table:name"] 
-    if name and range:match("^$?"..tblname) then
-      range = range:gsub("^[^%.]*",""):gsub("[%$%.]","")
-      print("named range", name, range)
-      t[name] = range
-    end
+  if i1 < 1 or i1 > n then
+    return {}
   end
-  return t
+  local k = 1
+  for i = i1,i2 do
+    res[k] = values[i]
+    k = k + 1
+  end
+  return res
 end
-
-
-
-
 
 local function tableValues(tbl,x1,y1,x2,y2)
   local t= {}
@@ -190,28 +214,6 @@ local function getRange(range)
   return ranges
 end
 
-local function table_slice (values,i1,i2)
-  -- Function from http://snippets.luacode.org/snippets/Table_Slice_116
-  local res = {}
-  local n = #values
-  -- default values for range
-  i1 = i1 or 1
-  i2 = i2 or n
-  if i2 < 0 then
-    i2 = n + i2 + 1
-  elseif i2 > n then
-    i2 = n
-  end
-  if i1 < 1 or i1 > n then
-    return {}
-  end
-  local k = 1
-  for i = i1,i2 do
-    res[k] = values[i]
-    k = k + 1
-  end
-  return res
-end
 
 local function interp(s, tab)
   return (s:gsub('(-%b{})', 
