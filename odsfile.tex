@@ -8,7 +8,7 @@
 \author{Michal Hoftich (\url{michal.h21@gmail.com})}
 \title{The \textsf{odsfile} package:\\
 accessing of the \textsf{opendocument spreadsheet} from \LaTeX{}
-documents\thanks{Version 0.9, last revisited 2024-10-10.}
+documents\thanks{Version 0.10, last revisited 2025-10-31.}
 }
 \usepackage[english]{babel}
 \lstloadlanguages{[LaTeX]Tex} 
@@ -425,6 +425,10 @@ CC & 5 & 7
 \section{Changes}
 
 \begin{description}
+  \item [v0.10]
+    \begin{itemize}
+      \item define Lua functions locally, to prevent pollution of global namespace\footnote{Thanks to Udi Fogiel}
+    \end{itemize}
   \item [v0.9]
     \begin{itemize}
       \item added the \texttt{save} and \texttt{debug} options
