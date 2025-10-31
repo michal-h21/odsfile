@@ -9,7 +9,7 @@ local handler = require("luaxml-mod-handler")
 
 local namedRanges = {}
 
-function load(filename)
+local function load(filename)
   -- add support for -reader command line option
   -- we must open the file and close it immediatelly 
   local f = io.open(filename, "r")
@@ -31,7 +31,7 @@ function load(filename)
   return p
 end
 
-function getTable(x,table_name)
+local function getTable(x,table_name)
   local t = getTable0(x,table_name)
   local t2 = {}
 
@@ -78,7 +78,7 @@ function getTable(x,table_name)
   return t2
 end
 
-function getTable0(x,table_name)
+local function getTable0(x,table_name)
   local tables = x.root["office:document-content"]["office:body"]["office:spreadsheet"]["table:table"]
   namedRanges = loadNameRanges(x, table_name)
   if #tables > 1 then
@@ -98,7 +98,7 @@ function getTable0(x,table_name)
   end
 end
 
-function getColumnCount(tbl)
+local function getColumnCount(tbl)
   local tbl = tbl or {}
   local columns = tbl["table:table-column"] or {}
   local x = 0
@@ -109,7 +109,7 @@ function getColumnCount(tbl)
   return x
 end
 
-function loadNameRanges(root, tblname)
+local function loadNameRanges(root, tblname)
   local tblname = tblname or ""
   local t = {}
   local ranges = root.root["office:document-content"]["office:body"]["office:spreadsheet"]["table:named-expressions"]
@@ -135,7 +135,7 @@ end
 
 
 
-function tableValues(tbl,x1,y1,x2,y2)
+local function tableValues(tbl,x1,y1,x2,y2)
   local t= {}
   local x1 = x1 or 1
   local x2 = x2 or getColumnCount(tbl)
@@ -162,14 +162,14 @@ function tableValues(tbl,x1,y1,x2,y2)
   return t
 end
 
-function join(tbl1, tbl2)
+local function join(tbl1, tbl2)
   for _, x in ipairs(tbl2) do
     tbl1[#tbl1+1] = x
   end
   return tbl1
 end
 
-function getRange(range)
+local function getRange(range)
   if range == nil then return {{nil,nil,nil,nil}} end
   local range = namedRanges[range] or range
   local r = range:lower()
@@ -190,7 +190,7 @@ function getRange(range)
   return ranges
 end
 
-function table_slice (values,i1,i2)
+local function table_slice (values,i1,i2)
   -- Function from http://snippets.luacode.org/snippets/Table_Slice_116
   local res = {}
   local n = #values
@@ -213,7 +213,7 @@ function table_slice (values,i1,i2)
   return res
 end
 
-function interp(s, tab)
+local function interp(s, tab)
   return (s:gsub('(-%b{})', 
     function(w) 
       s = w:sub(3, -2)
@@ -223,7 +223,7 @@ function interp(s, tab)
   )
 end
 
-function escape(s)
+local function escape(s)
   if latexescape=="true" then
     return string.gsub(s, "([%\\]?)([#%%%$&_%{%}%\\|])", function(a,b)
       if a=="" then 
@@ -243,14 +243,14 @@ function escape(s)
   end
 end
 
-get_link = function(val)
+local function get_link(val)
   local k = val["text:a"][1]
   local href = val["text:a"]["_attr"]["xlink:href"]
   return "\\odslink{"..href.."}{".. escape(k).."}"
 end
 
 
-function get_cell(val, delim)
+local function get_cell(val, delim)
   local val = val or ""
   local typ = type(val)
   if typ == "string" then
@@ -276,7 +276,7 @@ end
 
 -- Interface for adding new rows to the spreadsheet
 
-function newRow()
+local function newRow()
   local p = {
     pos = 0,
     cells = {},
@@ -333,19 +333,18 @@ end
 
 
 -- function for updateing the archive. Depends on external zip utility
-function updateZip(zipfile, updatefile)
+local function updateZip(zipfile, updatefile)
   local command  =  string.format("zip %s %s",zipfile, updatefile)
   print ("Updating an ods file.\n" ..command .."\n Return code: ", os.execute(command))  
 end
 
-function save(filename, content)
+local function save(filename, content)
   local f = io.open(filename, "w")
   f:write(content)
   f:close()
 end
 
 M.load= load
-M.loadContent  =    loadContent  
 M.getTable= getTable
 M.getTable0= getTable0
 M.getColumnCount= getColumnCount
@@ -353,19 +352,12 @@ M.loadNameRanges= loadNameRanges
 M.tableValues= tableValues
 M.join = join
 M.getRange= getRange
-M.getNumber=  getNumber
 M.table_slice = table_slice 
 M.interp= interp
 M.get_link  =get_link  
 M.escape= escape
 M.get_cell= get_cell
 M.newRow= newRow
-    -- Generic  for inserting cell
-M.addCell  =    addCell  
-M.addString  =    addString  
-M.addFloat  =    addFloat  
-M.findLastRow  =    findLastRow  
-M.insert  =    insert  
 --  for updateing the archive. Depends on external zip utility
 M.updateZip= updateZip
 M.save = save
